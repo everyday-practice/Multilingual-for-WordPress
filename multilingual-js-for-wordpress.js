@@ -1,4 +1,18 @@
+/**
+ * Multilingual.js for WordPress 프론트엔드 스크립트
+ * - window.MLWP_CFG 설정(types, classPrefix, selectors, excludeSelectors)을 사용합니다.
+ * - 선택자 범위 내 텍스트 노드에서 언어/숫자/문장부호 토큰을 찾아 span 으로 감쌉니다.
+ * - 초기 렌더와 동적 DOM 변경(MutationObserver) 모두 처리합니다.
+ */
 (function () {
+  /**
+   * 텍스트 내 지정된 유형(en, ko, cn, jp, num, punct)을 찾아
+   * classPrefix-<type> 클래스를 가진 span 으로 감쌉니다.
+   * @param {string} text
+   * @param {string[]} types
+   * @param {string} classPrefix
+   * @returns {string}
+   */
   function wrapText(text, types, classPrefix) {
     if (!text || typeof text !== 'string') return text;
     const patternSources = {
@@ -36,7 +50,7 @@
     });
   }
 
-  // Helper: check if an element is inside any excluded selector
+  // 요소가 제외 선택자 내부인지 여부
   function isWithinExcluded(el, excludeSelectors) {
     if (!excludeSelectors || !excludeSelectors.length) return false;
     for (let n = el; n && n.nodeType === 1; n = n.parentNode) {
@@ -50,6 +64,7 @@
     return false;
   }
 
+  // 요소 하위 텍스트 노드를 순회하며 래핑 적용(제외 태그/이미 래핑 span/공백 노드 건너뜀)
   function processElement(element, types, classPrefix) {
     const walker = document.createTreeWalker(
       element,
@@ -93,6 +108,7 @@
     });
   }
 
+  // 설정된 선택자에 대해 루트 기준으로 래핑 적용
   function apply(root) {
     if (!window.MLWP_CFG) return;
     const cfg = window.MLWP_CFG;
@@ -104,10 +120,11 @@
     });
   }
 
+  // 초기화: 최초 적용 + 동적 DOM 대응 옵저버 등록
   function init() {
     apply(document);
 
-    // Minimal observers for dynamic DOM updates (Interactivity API, etc.)
+    // 동적 DOM 업데이트(Interactivity API 등)를 위한 최소한의 옵저버
     try {
       const cfg = window.MLWP_CFG || {};
       const selectors = cfg.selectors || [];
@@ -115,11 +132,11 @@
         const observer = new MutationObserver(function (mutations) {
           const roots = [];
           mutations.forEach(function (m) {
-            // Handle added elements
+            // 추가된 요소
             m.addedNodes &&
               Array.prototype.forEach.call(m.addedNodes, function (node) {
-                if (!node || node.nodeType !== 1) return; // element only
-                // If the added node itself matches any selector, include it
+                if (!node || node.nodeType !== 1) return; // 요소 노드만
+                // 자체 매칭 시 루트 추가
                 for (let i = 0; i < selectors.length; i++) {
                   const sel = selectors[i];
                   if (node.matches && node.matches(sel) && !isWithinExcluded(node, cfg.excludeSelectors || [])) {
@@ -127,7 +144,7 @@
                     break;
                   }
                 }
-                // Also check descendants
+                // 하위 검사
                 selectors.forEach(function (sel) {
                   node.querySelectorAll &&
                     node.querySelectorAll(sel).forEach(function (el) {
@@ -136,7 +153,7 @@
                 });
               });
 
-            // Handle pure text updates (Interactivity API, etc.)
+            // 텍스트 변경
             if (m.type === 'characterData' && m.target && m.target.parentNode) {
               var el = m.target.parentNode;
               for (var i = 0; i < selectors.length; i++) {
@@ -149,7 +166,7 @@
             }
           });
           if (roots.length) {
-            // De-duplicate
+            // 중복 제거
             const seen = new Set();
             roots.forEach(function (r) {
               if (seen.has(r)) return;
@@ -165,11 +182,11 @@
         });
       }
     } catch (e) {
-      // noop
+      // 무시
     }
   }
 
-  // Expose a light-weight manual trigger
+  // 수동 트리거
   window.MLWP_APPLY = apply;
 
   if (document.readyState === 'loading') {

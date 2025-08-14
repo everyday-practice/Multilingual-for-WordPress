@@ -12,7 +12,7 @@ if (!defined('ABSPATH'))
 	exit;
 
 /**
- * Add a Settings link on the Plugins page row
+ * 플러그인 목록 화면에서 설정 링크 추가
  */
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
 	$url = admin_url('options-general.php?page=mlwp-settings');
@@ -97,7 +97,11 @@ function mlwp_enqueue_scripts()
 }
 
 /**
- * Server-side wrapping utilities
+ * 서버사이드 래핑 유틸리티 집합
+ */
+/**
+ * 래핑 대상 문자셋 패턴 맵 반환
+ * @return array 언어/유형별 정규식 패턴
  */
 function mlwp_get_patterns()
 {
@@ -111,6 +115,11 @@ function mlwp_get_patterns()
 	];
 }
 
+/**
+ * 선택된 유형 배열을 하나의 멀티-캡처 정규식으로 병합
+ * @param array $types 적용할 유형 리스트
+ * @return string|null 유니코드 정규식 또는 null
+ */
 function mlwp_build_combined_regex(array $types)
 {
 	$all = mlwp_get_patterns();
@@ -125,12 +134,23 @@ function mlwp_build_combined_regex(array $types)
 	return '/' . implode('|', $parts) . '/u';
 }
 
+/**
+ * 래핑에서 항상 제외할 태그인지 확인
+ * @param string $tagName 태그명
+ * @return bool 제외 여부
+ */
 function mlwp_is_excluded_tag($tagName)
 {
 	$tagName = strtolower($tagName);
 	return in_array($tagName, ['script', 'style', 'code', 'pre', 'textarea', 'kbd', 'samp'], true);
 }
 
+/**
+ * 부모가 이미 래핑된 span인지 검사하여 중복 래핑 방지
+ * @param DOMNode $node 현재 텍스트 노드
+ * @param string $classPrefix 클래스 접두사
+ * @return bool 부모가 래핑된 span인지 여부
+ */
 function mlwp_parent_is_wrapped_span($node, $classPrefix)
 {
 	$parent = $node->parentNode;
@@ -144,6 +164,12 @@ function mlwp_parent_is_wrapped_span($node, $classPrefix)
 	return preg_match('/\b' . preg_quote($classPrefix, '/') . '\-[a-z]+\b/i', $cls) === 1;
 }
 
+/**
+ * 보호해야 할 토큰([...], {{...}})을 기준으로 텍스트를 세그먼트 분리
+ * 보호 세그먼트는 래핑 대상에서 제외
+ * @param string $text 원본 텍스트
+ * @return array 세그먼트 배열 [text, protected]
+ */
 function mlwp_split_protected_bracket_segments($text)
 {
 	$segments = [];
@@ -173,6 +199,11 @@ function mlwp_split_protected_bracket_segments($text)
 	return $segments;
 }
 
+/**
+ * 텍스트 노드 내에서 지정 정규식과 일치하는 부분을 유형별 span으로 감싸기
+ * 보호 세그먼트를 존중하며, 실제 매칭이 없으면 변경하지 않음
+ * @return bool 변경 여부
+ */
 function mlwp_wrap_text_node(DOMDocument $doc, DOMText $textNode, $regex, array $types, $classPrefix)
 {
 	$subject = $textNode->nodeValue;
@@ -251,6 +282,11 @@ function mlwp_wrap_text_node(DOMDocument $doc, DOMText $textNode, $regex, array 
 	return true;
 }
 
+/**
+ * 매우 제한된 CSS 선택자를 XPath로 변환 (태그.클래스.클래스, 공백은 후손 결합자)
+ * @param string $selector CSS 유사 선택자
+ * @return string|null XPath 표현식
+ */
 function mlwp_selector_to_xpath($selector)
 {
 	$selector = trim($selector);
@@ -283,6 +319,11 @@ function mlwp_selector_to_xpath($selector)
 	return $xpath ?: null;
 }
 
+/**
+ * 선택자 배열에서 클래스 토큰만 추출해 중복 제거한 리스트 반환
+ * @param array $selectors 선택자 배열
+ * @return array 클래스명 리스트
+ */
 function mlwp_extract_class_tokens_from_selectors(array $selectors)
 {
 	$list = [];
@@ -295,6 +336,15 @@ function mlwp_extract_class_tokens_from_selectors(array $selectors)
 	return array_keys($list);
 }
 
+/**
+ * 주어진 HTML 조각 내에서 특정 선택자에 해당하는 요소들의 텍스트를 서버사이드로 래핑
+ * @param string $html 원본 HTML 조각
+ * @param array $selectors 대상 선택자 배열
+ * @param array $types 적용 유형
+ * @param string $classPrefix 클래스 접두사
+ * @param array $excludeSelectors 하위에서 제외할 선택자 배열
+ * @return string 변환된 HTML
+ */
 function mlwp_wrap_html_inside_selectors($html, array $selectors, array $types, $classPrefix, array $excludeSelectors = [])
 {
 	if (trim($html) === '' || empty($selectors) || empty($types))
@@ -392,6 +442,11 @@ function mlwp_wrap_html_inside_selectors($html, array $selectors, array $types, 
 	return $out;
 }
 
+/**
+ * 설정된 자동 선택자 기준으로 콘텐츠 조각을 래핑
+ * @param string $html 원본 HTML
+ * @return string 변환된 HTML
+ */
 function mlwp_server_wrap_content($html)
 {
 	$cfg = mlwp_get_config();
@@ -414,6 +469,11 @@ function mlwp_server_wrap_content($html)
 	return mlwp_wrap_html_inside_selectors($html, $selectors, $types, $classPrefix, $excludes);
 }
 
+/**
+ * 숏코드 출력에 대한 안전한 기본 선택자 기반 래핑
+ * @param string $html 숏코드 렌더 결과
+ * @return string 변환된 HTML
+ */
 function mlwp_server_wrap_shortcode_output($html)
 {
 	$cfg = mlwp_get_config();
@@ -426,12 +486,12 @@ function mlwp_server_wrap_shortcode_output($html)
 	return mlwp_wrap_html_inside_selectors($html, $fallback, $types, $classPrefix, $excludes);
 }
 
-// Filters: blocks, shortcodes, content, and menus
+// 필터: 블록, 숏코드, 본문(the_content), 메뉴 등의 서버사이드 래핑
 add_filter('render_block', function ($block_content, $block) {
 	if (empty($block_content))
 		return $block_content;
 
-	// Avoid transforming in admin or REST block renderer (editor context)
+	// 관리자/블록 에디터 컨텍스트(REST block renderer)에서는 변형하지 않음
 	if (is_admin() || (defined('REST_REQUEST') && REST_REQUEST))
 		return $block_content;
 
@@ -472,15 +532,15 @@ if (is_admin())
 	require_once __DIR__ . '/admin/settings.php';
 
 /**
- * Generic: Intercept admin-ajax.php output and REST API responses
- * to ensure server-side wrapping also applies to AJAX/REST driven updates.
+ * 공통 처리: admin-ajax.php 출력과 REST API 응답을 가로채어
+ * AJAX/REST 기반 업데이트에도 서버사이드 래핑을 적용
  */
-// 1) admin-ajax.php: output buffering
+// 1) admin-ajax.php: 출력 버퍼 가로채기
 add_action('init', function () {
 	if (!wp_doing_ajax()) {
 		return;
 	}
-	// Avoid interfering with wp-admin AJAX requests (editor, settings, etc.)
+	// wp-admin에서 발생한 AJAX(에디터, 설정 등)에는 개입하지 않음
 	$ref = isset($_SERVER['HTTP_REFERER']) ? (string) $_SERVER['HTTP_REFERER'] : '';
 	if ($ref && strpos($ref, '/wp-admin/') !== false) {
 		return;
@@ -489,7 +549,7 @@ add_action('init', function () {
 		if (!function_exists('mlwp_server_wrap_content')) {
 			return $buffer;
 		}
-		// Try JSON first
+		// 1) JSON 응답일 경우, 예상 키에서 HTML 텍스트를 찾아 래핑
 		$decoded = json_decode($buffer, true);
 		if (is_array($decoded)) {
 			$keys = ['template', 'html', 'content', 'rendered', 'markup', 'output'];
@@ -507,7 +567,7 @@ add_action('init', function () {
 			$walker($decoded);
 			return wp_json_encode($decoded, JSON_UNESCAPED_UNICODE);
 		}
-		// Fallback: plain HTML
+		// 2) JSON이 아니고 HTML 문자라면 그대로 래핑 시도
 		if (is_string($buffer) && strpos($buffer, '<') !== false) {
 			return mlwp_server_wrap_content($buffer);
 		}
@@ -515,7 +575,7 @@ add_action('init', function () {
 	});
 }, 0);
 
-// 2) REST API: filter dispatched response
+// 2) REST API: 응답 데이터 가로채기 및 선택적 래핑
 add_filter('rest_post_dispatch', function ($result, $server, $request) {
 	if (!function_exists('mlwp_server_wrap_content')) {
 		return $result;
@@ -523,7 +583,7 @@ add_filter('rest_post_dispatch', function ($result, $server, $request) {
 	if (!($result instanceof WP_REST_Response)) {
 		return $result;
 	}
-	// Skip wrapping for editor context and block renderer preview
+	// 에디터 컨텍스트 및 블록 렌더러 프리뷰에서는 래핑하지 않음
 	$route = is_object($request) ? $request->get_route() : '';
 	$context = is_object($request) ? $request->get_param('context') : '';
 	if ((is_string($route) && strpos($route, '/wp/v2/block-renderer') === 0) || $context === 'edit') {
