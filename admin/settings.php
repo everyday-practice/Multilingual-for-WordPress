@@ -32,7 +32,7 @@ add_action('admin_init', function () {
   ]);
 
   add_settings_section('mlwp_main', '기본 설정', function () {
-    echo '<p>타입 래핑, 클래스 프리픽스, 자동 적용 셀렉터, 예외 셀렉터, 숏코드 화이트리스트를 설정합니다.</p>';
+    echo '<p>래핑 대상 타입, 클래스 프리픽스, 자동 적용 셀렉터, 예외 셀렉터, 숏코드 화이트리스트, 커스텀 문자세트를 설정합니다.</p>';
   }, 'mlwp-settings');
 
   add_settings_field('mlwp_types', '래핑 대상 타입', 'mlwp_field_types', 'mlwp-settings', 'mlwp_main');
@@ -59,7 +59,7 @@ function mlwp_field_types()
   echo '<fieldset>';
   foreach ($all as $key => $label) {
     $checked = in_array($key, (array) $opts['types'], true) ? 'checked' : '';
-    echo '<label style="display:inline-block;margin-right:12px;">';
+    echo '<label style="display:inline-block;margin-right:12px !important;">';
     echo '<input type="checkbox" name="' . esc_attr(MLWP_OPTION_KEY) . '[types][]" value="' . esc_attr($key) . '" ' . $checked . '> ' . esc_html($label);
     echo '</label>';
   }
@@ -70,7 +70,7 @@ function mlwp_field_class_prefix()
 {
   $opts = mlwp_get_options();
   echo '<input type="text" name="' . esc_attr(MLWP_OPTION_KEY) . '[class_prefix]" value="' . esc_attr($opts['class_prefix']) . '" class="regular-text" />';
-  echo '<p class="description">예: ml → <code>ml-en</code>, <code>ml-num</code></p>';
+  echo '<p class="description">예: <code>ml</code> → <code>ml-en</code>, <code>ml-num</code></p>';
 }
 
 function mlwp_field_auto_selectors()
@@ -86,7 +86,7 @@ function mlwp_field_exclude_selectors()
   $opts = mlwp_get_options();
   $val = implode("\n", (array) $opts['exclude_selectors']);
   echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[exclude_selectors]" rows="4" class="large-text code">' . esc_textarea($val) . '</textarea>';
-  echo '<p class="description">한 줄에 하나씩 입력. 예: <code>.about-content .point-color</code> (해당 영역과 하위 요소는 래핑에서 제외)</p>';
+  echo '<p class="description">한 줄에 하나씩 입력. <br>예: <code>.about-content .point-color</code> (해당 영역과 하위 요소는 래핑에서 제외)</p>';
 }
 
 function mlwp_field_shortcode_whitelist()
@@ -94,7 +94,7 @@ function mlwp_field_shortcode_whitelist()
   $opts = mlwp_get_options();
   $val = implode("\n", (array) $opts['shortcode_whitelist']);
   echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[shortcode_whitelist]" rows="4" class="large-text code">' . esc_textarea($val) . '</textarea>';
-  echo '<p class="description">한 줄에 하나씩 숏코드 태그 입력 (예: post_content)</p>';
+  echo '<p class="description">한 줄에 하나씩 숏코드 태그 입력. <br>예: <code> post_content</code></p>';
 }
 
 function mlwp_field_custom_charsets()
@@ -102,7 +102,7 @@ function mlwp_field_custom_charsets()
   $opts = mlwp_get_options();
   $json = json_encode($opts['custom_charsets'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
   echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[custom_charsets]" rows="6" class="large-text code">' . esc_textarea($json) . '</textarea>';
-  echo '<p class="description">예: {"parentheses":{"className":"ml-parentheses","charset":"()（）"}}</p>';
+  echo '<p class="description">예: <code>{"parentheses":{"className":"ml-parentheses","charset":"()（）"}}</code></p>';
 }
 
 function mlwp_render_settings_page()

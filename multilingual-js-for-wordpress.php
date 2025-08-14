@@ -5,11 +5,21 @@
  * Description: 오픈소스 라이브러리 multilingual.js를 워드프레스에 맞게 재구현하여 서버사이드 래핑으로 FOUC를 최소화, 첫 렌더부터 일관된 타이포그래피를 제공합니다.
  * Version: 1.1.0
  * Author: Everyday Practice
- * Plugin URI: https://everyday-practice.com
+ * Plugin URI: https://github.com/everyday-practice/Multilingual.js-for-WordPress
  * Author URI: https://everyday-practice.com
  */
 if (!defined('ABSPATH'))
 	exit;
+
+/**
+ * Add a Settings link on the Plugins page row
+ */
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
+	$url = admin_url('options-general.php?page=mlwp-settings');
+	$settings_link = '<a href="' . esc_url($url) . '">Settings</a>';
+	array_unshift($links, $settings_link);
+	return $links;
+});
 
 /**
  * 설정: 동작 옵션
@@ -18,6 +28,7 @@ if (!defined('ABSPATH'))
  * - auto_selectors: 자동 적용할 CSS 선택자들
  * - custom_charsets: 사용자 정의 문자세트
  */
+
 function mlwp_get_config()
 {
 	$defaults = [
