@@ -21,8 +21,7 @@
       cn: '[\u4E00-\u9FBF]+',
       jp: '[\u3040-\u309F\u30A0-\u30FF]+',
       num: '[0-9]+',
-      // < > 제거, 인용부호/대시/ellipsis 추가
-      punct: '[（）().#^\\-&,;:@%*，、。」\'"‘’“”«»–—…]+',
+      punct: '[\\[\\]（）().#^\\-&,;:@%*，、。」\'"‘’“”«»–—…]+',
     };
     const parts = [];
     const indexToType = [];
@@ -34,20 +33,41 @@
     });
     if (!parts.length) return text;
     const regex = new RegExp(parts.join('|'), 'gu');
-    return text.replace(regex, function () {
-      const args = Array.prototype.slice.call(arguments);
-      const match = args[0];
-      const groups = args.slice(1, 1 + parts.length);
-      let tp = null;
-      for (let i = 0; i < groups.length; i++) {
-        if (groups[i] !== undefined) {
-          tp = indexToType[i];
-          break;
+
+    // {{ ... }} 보호 세그먼트를 분리하여 해당 부분은 래핑 제외
+    const protectedRegex = /\{\{[^}]+\}\}/g;
+    const doReplace = function (s) {
+      return s.replace(regex, function () {
+        const args = Array.prototype.slice.call(arguments);
+        const match = args[0];
+        const groups = args.slice(1, 1 + parts.length);
+        let tp = null;
+        for (let i = 0; i < groups.length; i++) {
+          if (groups[i] !== undefined) {
+            tp = indexToType[i];
+            break;
+          }
         }
+        if (!tp) return match;
+        return '<span class="' + classPrefix + '-' + tp + '">' + match + '</span>';
+      });
+    };
+
+    let result = '';
+    let lastIndex = 0;
+    let m;
+    while ((m = protectedRegex.exec(text)) !== null) {
+      const before = text.slice(lastIndex, m.index);
+      if (before) {
+        result += doReplace(before);
       }
-      if (!tp) return match;
-      return '<span class="' + classPrefix + '-' + tp + '">' + match + '</span>';
-    });
+      result += m[0]; // 보호 구간은 원문 유지
+      lastIndex = m.index + m[0].length;
+    }
+    if (lastIndex < text.length) {
+      result += doReplace(text.slice(lastIndex));
+    }
+    return result || text;
   }
 
   // 요소가 제외 선택자 내부인지 여부

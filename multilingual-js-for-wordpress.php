@@ -111,7 +111,7 @@ function mlwp_get_patterns()
 		'cn' => '[\x{4E00}-\x{9FBF}]+',
 		'jp' => '[\x{3040}-\x{309F}\x{30A0}-\x{30FF}]+',
 		'num' => '[0-9]+',
-		'punct' => '[（）().#^\-&,;:@%*，、。」\'"‘’“”«»–—…]+',
+		'punct' => '[\[\]（）().#^\-&,;:@%*，、。」\'"‘’“”«»–—…]+',
 	];
 }
 
@@ -176,26 +176,66 @@ function mlwp_split_protected_bracket_segments($text)
 	$length = mb_strlen($text, 'UTF-8');
 	$cursor = 0;
 
-	// Match shortcode-like [ ... ] and dynamic tags {{ ... }}
-	if (!preg_match_all('/(\[[^\]]+\]|\{\{[^}]+\}\})/u', $text, $matches, PREG_OFFSET_CAPTURE)) {
+	$protectedMatches = [];
+
+	// 1) {{ ... }} 템플릿 토큰은 항상 보호
+	if (preg_match_all('/\{\{[^}]+\}\}/u', $text, $mTpl, PREG_OFFSET_CAPTURE)) {
+		foreach ($mTpl[0] as $mm) {
+			$protectedMatches[] = $mm; // [matchedStr, byteOffset]
+		}
+	}
+
+	// 2) whitelist된 숏코드만 보호
+	$cfg = function_exists('mlwp_get_config') ? mlwp_get_config() : [];
+	$whitelist = isset($cfg['shortcode_whitelist']) && is_array($cfg['shortcode_whitelist'])
+		? array_values(array_filter(array_map('trim', $cfg['shortcode_whitelist'])))
+		: [];
+
+	if (!empty($whitelist) && function_exists('get_shortcode_regex')) {
+		$scRegex = '/' . get_shortcode_regex() . '/s';
+		if (preg_match_all($scRegex, $text, $mSc, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
+			foreach ($mSc as $match) {
+				$fullMatch = $match[0][0];
+				$offsetBytes = $match[0][1];
+				$tagName = isset($match[2][0]) ? $match[2][0] : '';
+				if ($tagName !== '' && in_array($tagName, $whitelist, true)) {
+					$protectedMatches[] = [$fullMatch, $offsetBytes];
+				}
+			}
+		}
+	}
+
+	if (empty($protectedMatches)) {
 		return [['text' => $text, 'protected' => false]];
 	}
 
-	foreach ($matches[0] as $m) {
+	usort($protectedMatches, function ($a, $b) {
+		return $a[1] <=> $b[1];
+	});
+
+	foreach ($protectedMatches as $m) {
 		$matchStr = $m[0];
 		$offsetBytes = $m[1];
-		// Convert byte offset to UTF-8 char offset
+
 		$start = mb_strlen(mb_strcut($text, 0, $offsetBytes, 'UTF-8'), 'UTF-8');
 
 		if ($start > $cursor) {
-			$segments[] = ['text' => mb_substr($text, $cursor, $start - $cursor, 'UTF-8'), 'protected' => false];
+			$segments[] = [
+				'text' => mb_substr($text, $cursor, $start - $cursor, 'UTF-8'),
+				'protected' => false
+			];
 		}
 		$segments[] = ['text' => $matchStr, 'protected' => true];
 		$cursor = $start + mb_strlen($matchStr, 'UTF-8');
 	}
+
 	if ($cursor < $length) {
-		$segments[] = ['text' => mb_substr($text, $cursor, $length - $cursor, 'UTF-8'), 'protected' => false];
+		$segments[] = [
+			'text' => mb_substr($text, $cursor, $length - $cursor, 'UTF-8'),
+			'protected' => false
+		];
 	}
+
 	return $segments;
 }
 
