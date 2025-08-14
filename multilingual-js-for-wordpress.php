@@ -149,24 +149,26 @@ function mlwp_split_protected_bracket_segments($text)
 	$segments = [];
 	$length = mb_strlen($text, 'UTF-8');
 	$cursor = 0;
-	while (true) {
-		$start = mb_strpos($text, '[', $cursor, 'UTF-8');
-		if ($start === false)
-			break;
-		$end = mb_strpos($text, ']', $start + 1, 'UTF-8');
-		if ($end === false)
-			break;
+
+	// Match shortcode-like [ ... ] and dynamic tags {{ ... }}
+	if (!preg_match_all('/(\[[^\]]+\]|\{\{[^}]+\}\})/u', $text, $matches, PREG_OFFSET_CAPTURE)) {
+		return [['text' => $text, 'protected' => false]];
+	}
+
+	foreach ($matches[0] as $m) {
+		$matchStr = $m[0];
+		$offsetBytes = $m[1];
+		// Convert byte offset to UTF-8 char offset
+		$start = mb_strlen(mb_strcut($text, 0, $offsetBytes, 'UTF-8'), 'UTF-8');
+
 		if ($start > $cursor) {
 			$segments[] = ['text' => mb_substr($text, $cursor, $start - $cursor, 'UTF-8'), 'protected' => false];
 		}
-		$segments[] = ['text' => mb_substr($text, $start, $end - $start + 1, 'UTF-8'), 'protected' => true];
-		$cursor = $end + 1;
+		$segments[] = ['text' => $matchStr, 'protected' => true];
+		$cursor = $start + mb_strlen($matchStr, 'UTF-8');
 	}
 	if ($cursor < $length) {
 		$segments[] = ['text' => mb_substr($text, $cursor, $length - $cursor, 'UTF-8'), 'protected' => false];
-	}
-	if (empty($segments)) {
-		$segments[] = ['text' => $text, 'protected' => false];
 	}
 	return $segments;
 }
@@ -428,6 +430,11 @@ function mlwp_server_wrap_shortcode_output($html)
 add_filter('render_block', function ($block_content, $block) {
 	if (empty($block_content))
 		return $block_content;
+
+	// Avoid transforming in admin or REST block renderer (editor context)
+	if (is_admin() || (defined('REST_REQUEST') && REST_REQUEST))
+		return $block_content;
+
 	return mlwp_server_wrap_content($block_content);
 }, 20, 2);
 
@@ -473,6 +480,11 @@ add_action('init', function () {
 	if (!wp_doing_ajax()) {
 		return;
 	}
+	// Avoid interfering with wp-admin AJAX requests (editor, settings, etc.)
+	$ref = isset($_SERVER['HTTP_REFERER']) ? (string) $_SERVER['HTTP_REFERER'] : '';
+	if ($ref && strpos($ref, '/wp-admin/') !== false) {
+		return;
+	}
 	ob_start(function ($buffer) {
 		if (!function_exists('mlwp_server_wrap_content')) {
 			return $buffer;
@@ -509,6 +521,12 @@ add_filter('rest_post_dispatch', function ($result, $server, $request) {
 		return $result;
 	}
 	if (!($result instanceof WP_REST_Response)) {
+		return $result;
+	}
+	// Skip wrapping for editor context and block renderer preview
+	$route = is_object($request) ? $request->get_route() : '';
+	$context = is_object($request) ? $request->get_param('context') : '';
+	if ((is_string($route) && strpos($route, '/wp/v2/block-renderer') === 0) || $context === 'edit') {
 		return $result;
 	}
 	$data = $result->get_data();
