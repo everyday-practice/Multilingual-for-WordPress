@@ -13,7 +13,7 @@
 
 ## 설정 위치
 
-- `설정 → Multilingual Typography`
+- `설정 → Multilingual 설정`
 
 여기서 다음 옵션을 조정할 수 있습니다.
 

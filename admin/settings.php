@@ -18,8 +18,8 @@ function mlwp_default_options()
 
 add_action('admin_menu', function () {
   add_options_page(
-    'Multilingual Typography',
-    'Multilingual Typography',
+    'Multilingual 설정',
+    'Multilingual 설정',
     'manage_options',
     'mlwp-settings',
     'mlwp_render_settings_page'
@@ -110,7 +110,7 @@ function mlwp_render_settings_page()
   if (!current_user_can('manage_options'))
     return;
   echo '<div class="wrap">';
-  echo '<h1>Multilingual Typography 설정</h1>';
+  echo '<h1>Multilingual 설정</h1>';
   echo '<form action="options.php" method="post">';
   settings_fields('mlwp_settings_group');
   do_settings_sections('mlwp-settings');
