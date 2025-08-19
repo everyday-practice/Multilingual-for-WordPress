@@ -332,10 +332,13 @@ function mlwp_selector_to_xpath($selector)
 	$selector = trim($selector);
 	if ($selector === '')
 		return null;
-	if ($selector[0] === '.') {
+	
+	// 단일 클래스 선택자만 처리 (공백이 없는 경우만)
+	if ($selector[0] === '.' && strpos($selector, ' ') === false) {
 		$cls = substr($selector, 1);
 		return '//*[contains(concat(" ", normalize-space(@class), " "), " ' . $cls . ' ")]';
 	}
+	
 	$tokens = preg_split('/\s+/', $selector);
 	$xpath = '';
 	foreach ($tokens as $tok) {
@@ -433,6 +436,7 @@ function mlwp_wrap_html_inside_selectors($html, array $selectors, array $types, 
 				}
 			}
 		}
+		
 		$stack = [$el];
 		while ($stack) {
 			$node = array_pop($stack);
@@ -533,7 +537,8 @@ function mlwp_expand_exclude_selectors_for_dynamic_classes(array $excludeSelecto
 		$tokens = preg_split('/\s+/', trim($selector));
 		
 		foreach ($tokens as $i => $token) {
-			if (preg_match('/^\.([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)/', $token)) {
+			// 복합 클래스 토큰 감지 (.class1.class2 형태)
+			if (preg_match('/^\.([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+.*)/', $token)) {
 				// 복합 클래스 토큰을 단순화
 				$classes = explode('.', ltrim($token, '.'));
 				
@@ -561,30 +566,25 @@ function mlwp_expand_exclude_selectors_for_dynamic_classes(array $excludeSelecto
 		}
 	}
 	
-	return array_unique($expanded);
+	$result = array_unique($expanded);
+	return $result;
 }
 
 // 필터: 블록, 숏코드, 본문(the_content), 메뉴 등의 서버사이드 래핑
 add_filter('render_block', function ($block_content, $block) {
+	if (is_admin())
+		return $block_content;
 	if (empty($block_content))
 		return $block_content;
-
-	// 관리자/블록 에디터 컨텍스트(REST block renderer)에서는 변형하지 않음
-	if (is_admin() || (defined('REST_REQUEST') && REST_REQUEST))
-		return $block_content;
-
 	return mlwp_server_wrap_content($block_content);
 }, 20, 2);
 
 add_filter('do_shortcode_tag', function ($output, $tag, $attr) {
+	if (is_admin())
+		return $output;
 	if (empty($output))
 		return $output;
-	$cfg = mlwp_get_config();
-	$whitelist = isset($cfg['shortcode_whitelist']) ? (array) $cfg['shortcode_whitelist'] : [];
-	if (empty($whitelist) || !in_array($tag, $whitelist, true)) {
-		return $output;
-	}
-	return mlwp_server_wrap_shortcode_output($output);
+	return mlwp_server_wrap_content($output);
 }, 20, 3);
 
 add_filter('the_content', function ($content) {
@@ -593,7 +593,7 @@ add_filter('the_content', function ($content) {
 	if (empty($content))
 		return $content;
 	return mlwp_server_wrap_content($content);
-}, 12);
+}, 20);
 
 /**
  * 기본 훅 등록 (항상 실행)
