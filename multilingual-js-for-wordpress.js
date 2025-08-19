@@ -128,10 +128,92 @@
     });
   }
 
+  // 동적 클래스 변경을 감지하여 조건부 언래핑/래핑 수행
+  function setupConditionalUnwrapping() {
+    if (!window.MLWP_CFG) return;
+
+    const cfg = window.MLWP_CFG;
+    const excludeSelectors = cfg.excludeSelectors || [];
+    const autoSelectors = cfg.selectors || [];
+
+    if (!excludeSelectors.length) return;
+
+    // 복합 클래스 패턴이 있는 예외 선택자 찾기
+    const dynamicExcludes = excludeSelectors.filter((selector) => /\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+/.test(selector));
+
+    if (!dynamicExcludes.length) return;
+
+    // MutationObserver로 클래스 변경 감지
+    const observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          const target = mutation.target;
+
+          // 동적 예외 선택자와 매칭되는지 확인
+          let shouldUnwrap = false;
+          let shouldRewrap = false;
+
+          dynamicExcludes.forEach(function (excludeSelector) {
+            try {
+              // 현재 타겟이 예외 선택자의 첫 번째 부분과 매칭되는지 확인
+              const firstPart = excludeSelector.split(' ')[0];
+              if (target.matches && target.matches(firstPart)) {
+                // 전체 예외 선택자와 매칭되는 하위 요소들 확인
+                const matchingElements = target.querySelectorAll(excludeSelector.replace(firstPart + ' ', ''));
+                if (matchingElements.length > 0) {
+                  shouldUnwrap = true;
+                  // 매칭되는 요소들에서 래핑 제거
+                  matchingElements.forEach(function (element) {
+                    const wrappedSpans = element.querySelectorAll('span[class*="' + cfg.classPrefix + '-"]');
+                    wrappedSpans.forEach(function (span) {
+                      const parent = span.parentNode;
+                      if (parent) {
+                        while (span.firstChild) {
+                          parent.insertBefore(span.firstChild, span);
+                        }
+                        parent.removeChild(span);
+                      }
+                    });
+                  });
+                }
+              }
+            } catch (e) {
+              // 선택자 에러 무시
+            }
+          });
+
+          // 예외 조건에서 벗어났다면 다시 래핑 적용
+          if (!shouldUnwrap) {
+            autoSelectors.forEach(function (autoSelector) {
+              try {
+                const elements = target.querySelectorAll(autoSelector);
+                elements.forEach(function (element) {
+                  if (!isWithinExcluded(element, excludeSelectors)) {
+                    processElement(element, cfg.types || [], cfg.classPrefix || 'ml');
+                  }
+                });
+              } catch (e) {
+                // 선택자 에러 무시
+              }
+            });
+          }
+        }
+      });
+    });
+
+    // body 전체 관찰
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class'],
+      subtree: true,
+    });
+  }
+
   // 설정된 선택자에 대해 루트 기준으로 래핑 적용
   function apply(root) {
     if (!window.MLWP_CFG) return;
     const cfg = window.MLWP_CFG;
+
     (cfg.selectors || []).forEach(function (selector) {
       (root || document).querySelectorAll(selector).forEach(function (el) {
         if (isWithinExcluded(el, cfg.excludeSelectors || [])) return;
@@ -143,6 +225,7 @@
   // 초기화: 최초 적용 + 동적 DOM 대응 옵저버 등록
   function init() {
     apply(document);
+    setupConditionalUnwrapping(); // 조건부 언래핑 설정
 
     // 동적 DOM 업데이트(Interactivity API 등)를 위한 최소한의 옵저버
     try {

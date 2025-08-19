@@ -409,12 +409,17 @@ function mlwp_wrap_html_inside_selectors($html, array $selectors, array $types, 
 	if (empty($targetNodes)) {
 		return $html;
 	}
+	
+	// 동적 클래스를 고려한 확장된 예외 선택자 사용
+	$expandedExcludeSelectors = mlwp_expand_exclude_selectors_for_dynamic_classes($excludeSelectors);
+	
 	$regex = mlwp_build_combined_regex($types);
 	foreach ($targetNodes as $el) {
-		// Build exclude set per root, using full selector and rightmost simple token as fallback
+		// Build exclude set per root, using expanded selectors
 		$excludeNodeSet = [];
-		if (!empty($excludeSelectors)) {
-			foreach ($excludeSelectors as $exSel) {
+
+		if (!empty($expandedExcludeSelectors)) {
+			foreach ($expandedExcludeSelectors as $exSel) {
 				$exSel = trim($exSel);
 				if ($exSel === '') continue;
 				$ex = mlwp_selector_to_xpath($exSel);
@@ -423,20 +428,6 @@ function mlwp_wrap_html_inside_selectors($html, array $selectors, array $types, 
 					if ($exNodes) {
 						foreach ($exNodes as $exNode) {
 							$excludeNodeSet[spl_object_hash($exNode)] = $exNode;
-						}
-					}
-				}
-				// rightmost token fallback (handles cases where ancestor is outside the snippet)
-				$parts = preg_split('/\s+/', $exSel);
-				$tail = is_array($parts) ? trim(end($parts)) : '';
-				if ($tail && $tail !== $exSel) {
-					$exTail = mlwp_selector_to_xpath($tail);
-					if ($exTail) {
-						$exTailNodes = $xpath->query($exTail, $el);
-						if ($exTailNodes) {
-							foreach ($exTailNodes as $exNode) {
-								$excludeNodeSet[spl_object_hash($exNode)] = $exNode;
-							}
 						}
 					}
 				}
@@ -524,6 +515,53 @@ function mlwp_server_wrap_shortcode_output($html)
 		return $html;
 	$fallback = ['p', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'figcaption', 'td', 'th', 'a', 'span', 'em', 'strong', 'div'];
 	return mlwp_wrap_html_inside_selectors($html, $fallback, $types, $classPrefix, $excludes);
+}
+
+/**
+ * 예외 선택자를 확장하여 동적 클래스 변형 포함
+ * @param array $excludeSelectors 원본 예외 선택자 배열
+ * @return array 확장된 예외 선택자 배열
+ */
+function mlwp_expand_exclude_selectors_for_dynamic_classes(array $excludeSelectors)
+{
+	$expanded = [];
+	
+	foreach ($excludeSelectors as $selector) {
+		$expanded[] = $selector; // 원본 유지
+		
+		// 복합 클래스가 있는 토큰을 찾아서 각 클래스를 개별적으로 제거한 변형 생성
+		$tokens = preg_split('/\s+/', trim($selector));
+		
+		foreach ($tokens as $i => $token) {
+			if (preg_match('/^\.([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)/', $token)) {
+				// 복합 클래스 토큰을 단순화
+				$classes = explode('.', ltrim($token, '.'));
+				
+				// 각 클래스를 하나씩 제거한 버전들 생성
+				for ($j = 0; $j < count($classes); $j++) {
+					$reducedClasses = $classes;
+					array_splice($reducedClasses, $j, 1);
+					
+					if (!empty($reducedClasses)) {
+						$newTokens = $tokens;
+						$newTokens[$i] = '.' . implode('.', $reducedClasses);
+						$newSelector = implode(' ', $newTokens);
+						$expanded[] = $newSelector;
+					}
+				}
+				
+				// 모든 클래스를 제거하고 나머지 토큰들만 남긴 버전
+				$remainingTokens = $tokens;
+				array_splice($remainingTokens, $i, 1);
+				if (!empty($remainingTokens)) {
+					$baseSelector = implode(' ', $remainingTokens);
+					$expanded[] = trim($baseSelector);
+				}
+			}
+		}
+	}
+	
+	return array_unique($expanded);
 }
 
 // 필터: 블록, 숏코드, 본문(the_content), 메뉴 등의 서버사이드 래핑
