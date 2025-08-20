@@ -14,6 +14,26 @@ msgstr ""
 "X-Generator: WordPress\n"
 "X-Domain: multilingual-js-wp\n"
 
+#. Plugin Name of the plugin
+msgid "Multilingual.js for WordPress"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://github.com/everyday-practice/Multilingual.js-for-WordPress"
+msgstr ""
+
+#. Description of the plugin
+msgid "Server-side text wrapping for consistent typography across languages. Wraps text in spans by language type to eliminate FOUC and provide enhanced multilingual design control."
+msgstr ""
+
+#. Author of the plugin
+msgid "Everyday Practice"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://everyday-practice.com"
+msgstr ""
+
 #: admin/settings.php:22
 #: admin/settings.php:23
 #: admin/settings.php:164
@@ -76,40 +96,102 @@ msgstr ""
 msgid "Punctuation (punct)"
 msgstr ""
 
-#: admin/settings.php:87
+#: admin/settings.php:94
 msgid "Custom Character Sets (Auto-enabled):"
 msgstr ""
 
-#: admin/settings.php:94
-msgid "Custom character sets are automatically applied when defined below."
+msgid "View Usage"
 msgstr ""
 
-#: admin/settings.php:101
-msgid "Example: <code>ml</code> → <code>ml-en</code>, <code>ml-num</code>"
+msgid "CSS selectors that automatically apply text wrapping when the page loads. Configure which elements should have their text processed for multilingual typography."
 msgstr ""
 
-#: admin/settings.php:109
-msgid "Enter one per line (simple selectors like .class, tag.class recommended)"
+msgid "Usage:"
 msgstr ""
 
-#: admin/settings.php:117
-msgid "Enter one per line.<br>Example: <code>.about-content .point-color</code> (excludes the area and its child elements from wrapping)"
+msgid "Enter one CSS selector per line. These elements will have their text automatically wrapped with language-specific classes."
 msgstr ""
 
-#: admin/settings.php:125
-msgid "Enter shortcode tags one per line.<br>Example: <code>post_content</code>"
+msgid "CSS selectors that will be excluded from automatic text wrapping, even if they match auto-apply selectors. Use this to protect specific areas from processing."
 msgstr ""
 
-#: admin/settings.php:148
-msgid "Enter one per line in <code>type:charset</code> format<br>Examples: <code>parentheses:{}</code>, <code>bullet:•</code>, <code>arrow:→←</code>"
+msgid "Enter one CSS selector per line. These elements and their children will be excluded from text wrapping."
 msgstr ""
 
-#: admin/settings.php:151
-msgid "Advanced Settings (JSON Format)"
+msgid "Important:"
 msgstr ""
 
-#: admin/settings.php:153
-msgid "Direct JSON input (allows detailed settings like className)"
+msgid "Exclusion rules apply to the selected element AND all its child elements."
+msgstr ""
+
+msgid "Use this when applying multilingual typography to content within [...] format shortcodes from themes or plugins. Prevents text wrapping from being applied when brackets are recognized as punctuation."
+msgstr ""
+
+msgid "Enter shortcode tag names one per line (without brackets []), example: [post_content] → post_content"
+msgstr ""
+
+msgid "Only add shortcodes that output simple text content. Avoid shortcodes with complex HTML, forms, or interactive elements."
+msgstr ""
+
+msgid "Define your own character types beyond the basic ones (English, Korean, Chinese, Japanese, numbers, punctuation). Create custom CSS classes for special characters that need unique styling."
+msgstr ""
+
+msgid "Format Examples:"
+msgstr ""
+
+msgid "Bullet point symbols → .ml-bullet"
+msgstr ""
+
+msgid "Arrow symbols → .ml-arrow"
+msgstr ""
+
+msgid "Enter one per line in type:charset format. Each type becomes a CSS class (.ml-typename)."
+msgstr ""
+
+msgid "This prefix is used for all automatically generated CSS classes. Choose a short, unique prefix to avoid conflicts with existing styles."
+msgstr ""
+
+msgid "Enter \"ml\" to generate classes like ml-en, ml-ko, ml-num, etc."
+msgstr ""
+
+#: admin/settings.php:280
+msgid "Generated Classes with \"ml\" prefix:"
+msgstr ""
+
+#: admin/settings.php:282
+msgid "English text"
+msgstr ""
+
+#: admin/settings.php:283
+msgid "Korean text"
+msgstr ""
+
+#: admin/settings.php:284
+msgid "Chinese text"
+msgstr ""
+
+#: admin/settings.php:285
+msgid "Japanese text"
+msgstr ""
+
+#: admin/settings.php:286
+msgid "Numbers"
+msgstr ""
+
+#: admin/settings.php:287
+msgid "Punctuation"
+msgstr ""
+
+#: admin/settings.php:290
+msgid "💡 Tip:"
+msgstr ""
+
+#: admin/settings.php:291
+msgid "Use 2-3 character prefixes like \"ml\", \"txt\", or \"lang\". Avoid long prefixes for better performance."
+msgstr ""
+
+#: admin/settings.php:297
+msgid "Default: <code>ml</code> — generates classes like <code>ml-en</code>, <code>ml-ko</code>, <code>ml-num</code>, etc."
 msgstr ""
 
 #: multilingual-js-for-wordpress.php:19

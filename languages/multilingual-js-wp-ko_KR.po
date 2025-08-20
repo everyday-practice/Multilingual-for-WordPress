@@ -15,6 +15,26 @@ msgstr ""
 "X-Generator: WordPress\n"
 "X-Domain: multilingual-js-wp\n"
 
+#. Plugin Name of the plugin
+msgid "Multilingual.js for WordPress"
+msgstr "Multilingual.js for WordPress"
+
+#. Plugin URI of the plugin
+msgid "https://github.com/everyday-practice/Multilingual.js-for-WordPress"
+msgstr "https://github.com/everyday-practice/Multilingual.js-for-WordPress"
+
+#. Description of the plugin
+msgid "Server-side text wrapping for consistent typography across languages. Wraps text in spans by language type to eliminate FOUC and provide enhanced multilingual design control."
+msgstr "어도비 인디자인의 합성글꼴(섞어짜기)처럼 보다 섬세하게 다국어 섞어쓰기를 제어하는 위한 플러그인입니다. 오픈소스 라이브러리 multilingual.js를 워드프레스에 맞게 재구현하여, 서버사이드 래핑으로 스타일 지연 현상(FOUC)을 방지합니다."
+
+#. Author of the plugin
+msgid "Everyday Practice"
+msgstr "Everyday Practice"
+
+#. Author URI of the plugin
+msgid "https://everyday-practice.com"
+msgstr "https://everyday-practice.com"
+
 #: admin/settings.php:22
 #: admin/settings.php:23
 #: admin/settings.php:164
@@ -77,41 +97,63 @@ msgstr "숫자(num)"
 msgid "Punctuation (punct)"
 msgstr "문장부호(punct)"
 
-#: admin/settings.php:87
+#: admin/settings.php:94
 msgid "Custom Character Sets (Auto-enabled):"
 msgstr "커스텀 문자세트 (자동 활성화됨):"
 
-#: admin/settings.php:94
-msgid "Custom character sets are automatically applied when defined below."
-msgstr "커스텀 문자세트에 입력하면 별도 체크 없이 자동으로 적용됩니다."
+msgid "View Usage"
+msgstr "사용법 보기"
 
-#: admin/settings.php:101
-msgid "Example: <code>ml</code> → <code>ml-en</code>, <code>ml-num</code>"
-msgstr "예: <code>ml</code> → <code>ml-en</code>, <code>ml-num</code>"
+msgid "CSS selectors that automatically apply text wrapping when the page loads. Configure which elements should have their text processed for multilingual typography."
+msgstr "페이지 로드 시 자동으로 텍스트 래핑을 적용할 CSS 셀렉터입니다. 다국어 타이포그래피 처리를 할 요소를 설정하세요."
 
-#: admin/settings.php:109
-msgid "Enter one per line (simple selectors like .class, tag.class recommended)"
-msgstr "한 줄에 하나씩 입력 (.class, tag.class 등 단순 셀렉터 권장)"
+msgid "Usage:"
+msgstr "사용법:"
 
-#: admin/settings.php:117
-msgid "Enter one per line.<br>Example: <code>.about-content .point-color</code> (excludes the area and its child elements from wrapping)"
-msgstr "한 줄에 하나씩 입력. <br>예: <code>.about-content .point-color</code> (해당 영역과 하위 요소는 래핑에서 제외)"
+msgid "Enter one CSS selector per line. These elements will have their text automatically wrapped with language-specific classes."
+msgstr "한 줄에 하나씩 CSS 셀렉터를 입력하세요. 이 요소들의 텍스트가 자동으로 언어별 클래스로 래핑됩니다."
 
-#: admin/settings.php:125
-msgid "Enter shortcode tags one per line.<br>Example: <code>post_content</code>"
-msgstr "한 줄에 하나씩 숏코드 태그 입력. <br>예: <code>post_content</code>"
+msgid "CSS selectors that will be excluded from automatic text wrapping, even if they match auto-apply selectors. Use this to protect specific areas from processing."
+msgstr "자동 적용 셀렉터와 일치하더라도 자동 텍스트 래핑에서 제외될 CSS 셀렉터입니다. 특정 영역을 처리에서 보호하는 데 사용하세요."
 
-#: admin/settings.php:148
-msgid "Enter one per line in <code>type:charset</code> format<br>Examples: <code>parentheses:{}</code>, <code>bullet:•</code>, <code>arrow:→←</code>"
-msgstr "한 줄에 하나씩 <code>타입명:문자세트</code> 형식으로 입력<br>예: <code>parentheses:{}</code>, <code>bullet:•</code>, <code>arrow:→←</code>"
+msgid "Enter one CSS selector per line. These elements and their children will be excluded from text wrapping."
+msgstr "한 줄에 하나씩 CSS 셀렉터를 입력하세요. 이 요소들과 하위 요소들은 텍스트 래핑에서 제외됩니다."
 
-#: admin/settings.php:151
-msgid "Advanced Settings (JSON Format)"
-msgstr "고급 설정 (JSON 형식)"
+msgid "Important:"
+msgstr "중요:"
 
-#: admin/settings.php:153
-msgid "Direct JSON input (allows detailed settings like className)"
-msgstr "JSON 형식으로 직접 입력 (className 등 세부 설정 가능)"
+msgid "Exclusion rules apply to the selected element AND all its child elements."
+msgstr "예외 규칙은 선택된 요소와 모든 하위 요소에 적용됩니다."
+
+msgid "Use this when applying multilingual typography to content within [...] format shortcodes from themes or plugins. Prevents text wrapping from being applied when brackets are recognized as punctuation."
+msgstr "테마나 플러그인의 [...] 형식의 숏코드 안의 콘텐츠에 다국어 타이포그래피를 적용할 경우 사용합니다. 대괄호를 문자부호로 인식하여 텍스트 래핑이 적용되는 걸 방지합니다."
+
+msgid "Enter shortcode tag names one per line (without brackets []), example: [post_content] → post_content"
+msgstr "한 줄에 하나씩 숏코드 안의 태그명을 입력하세요 (대괄호 [] 제외), 예: [post_content] → post_content"
+
+msgid "Only add shortcodes that output simple text content. Avoid shortcodes with complex HTML, forms, or interactive elements."
+msgstr "단순 텍스트 콘텐츠를 출력하는 숏코드만 추가하세요. 복잡한 HTML, 폼, 또는 인터랙티브 요소가 있는 숏코드는 피하세요."
+
+msgid "Define your own character types beyond the basic ones (English, Korean, Chinese, Japanese, numbers, punctuation). Create custom CSS classes for special characters that need unique styling."
+msgstr "기본 타입(영문, 한글, 중문, 일문, 숫자, 문장부호) 외에 사용자 정의 문자 타입을 정의합니다. 고유한 스타일링이 필요한 특수 문자를 위한 커스텀 CSS 클래스를 만드세요."
+
+msgid "Format Examples:"
+msgstr "형식 예시:"
+
+msgid "Bullet point symbols → .ml-bullet"
+msgstr "불릿 포인트 기호 → .ml-bullet"
+
+msgid "Arrow symbols → .ml-arrow"
+msgstr "화살표 기호 → .ml-arrow"
+
+msgid "Enter one per line in type:charset format. Each type becomes a CSS class (.ml-typename)."
+msgstr "한 줄에 하나씩 타입:문자세트 형식으로 입력하세요. 각 타입은 CSS 클래스(.ml-typename)가 됩니다."
+
+msgid "This prefix is used for all automatically generated CSS classes. Choose a short, unique prefix to avoid conflicts with existing styles."
+msgstr "이 프리픽스는 모든 자동 생성 CSS 클래스에 사용됩니다. 기존 스타일과의 충돌을 피하기 위해 짧고 고유한 프리픽스를 선택하세요."
+
+msgid "Enter \"ml\" to generate classes like ml-en, ml-ko, ml-num, etc."
+msgstr "ml을 입력하면 ml-en, ml-ko, ml-num 등의 클래스를 생성합니다."
 
 #: multilingual-js-for-wordpress.php:19
 msgid "Settings"

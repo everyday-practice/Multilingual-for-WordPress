@@ -2,7 +2,9 @@
 
 [![WordPress](https://img.shields.io/badge/WordPress-6.x%2B-21759B?logo=wordpress&logoColor=white)](#) [![Type](https://img.shields.io/badge/Type-Plugin-blue)](#) [![Multilingual](https://img.shields.io/badge/Multilingual-i18n%2Fl10n-4CAF50)](#) [![Typography](https://img.shields.io/badge/Typography-Text%20wrapping-8E44AD)](#) [![Performance](https://img.shields.io/badge/Performance-Optimized-FF9800)](#) [![Accessibility](https://img.shields.io/badge/Accessibility-a11y-795548)](#)
 
-서버사이드에서 텍스트(영문/숫자/문장부호/한글/중문/일문 등)를 유형별로 `<span>`으로 래핑하여 첫 렌더부터 일관된 타이포그래피를 제공합니다. 클라이언트 사이드 스크립트가 보조적으로 동작해 동적 DOM 업데이트에도 대응합니다. 더 이상 MU 플러그인이 아닌 일반 플러그인입니다.
+어도비 인디자인의 합성글꼴(섞어짜기)처럼 보다 섬세하게 다국어 섞어쓰기를 제어하는 위한 플러그인으로 오픈소스 라이브러리 multilingual.js를 워드프레스에 맞게 재구현했습니다.
+서버사이드에서 텍스트(영문/숫자/문장부호/한글/중문/일문 등)를 유형별로 `<span>`으로 래핑하여 스타일 지연 현상(FOUC)을 방지합니다.
+AJAX / Interactivity API 에도 대응하여 클라이언트 사이드 랜더링 후 동적으로 업데이트되는 DOM에도 대응합니다.
 
 ## 📋 요구 사항
 
@@ -31,7 +33,7 @@
   - 예: `post_content`
 - **커스텀 문자세트(custom_charsets)**: 사용자 정의 문자 타입과 패턴 추가
   - 한 줄에 하나씩 `타입명:문자세트` 형식으로 입력
-  - 예: `parentheses:(){}[]`, `bullet:•`, `arrow:→←↑↓`
+  - 예: `bullet:•`, `arrow:→←↑↓`
 
 ## 🧠 동작 개요
 
