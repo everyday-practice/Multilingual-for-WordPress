@@ -90,51 +90,137 @@ function mlwp_field_types()
   
   // 커스텀 타입은 읽기 전용으로 표시
   if (!empty($custom_types)) {
-    echo '<div style="margin-top:10px;padding:10px;background:#ffffff;border-left:2px solid#c91c1c;">';
+    echo '<div style="max-width:800px;margin-top:10px;padding:8px 10px;background:#ffffff;border:1px solid#f46565;box-sizing: border-box;font-size: 13px;line-height: 1.3;">';
     echo '<strong>' . __('Custom Character Sets (Auto-enabled):', 'multilingual-js-wp') . '</strong><br>';
     foreach ($custom_types as $key => $label) {
       echo '<span style="display:inline-block;margin-right:15px;color:#c91c1c;">✓ ' . esc_html($label) . '</span>';
     }
     echo '</div>';
   }
-  
-  echo '<p class="description">' . __('Custom character sets are automatically applied when defined below.', 'multilingual-js-wp') . '</p>';
 }
 
 function mlwp_field_class_prefix()
 {
   $opts = mlwp_get_options();
-  echo '<input type="text" name="' . esc_attr(MLWP_OPTION_KEY) . '[class_prefix]" value="' . esc_attr($opts['class_prefix']) . '" class="regular-text" />';
-  echo '<p class="description">' . __('Example: <code>ml</code> → <code>ml-en</code>, <code>ml-num</code>', 'multilingual-js-wp') . '</p>';
+  
+  // 아코디언 형식으로 간단한 설명 추가
+  echo '<details style="max-width: 800px; margin-bottom: 15px;">';
+  echo '<summary style="padding: 7px 12px; background: #ffffff; cursor: pointer; color: #666; font-weight: 600; font-size: 13px;">';
+  echo __('View Usage', 'multilingual-js-wp');
+  echo '</summary>';
+  echo '<div style="padding: 13px; background: #fff; border-top: 1px solid #ddd; font-size: 13px;">';
+  
+  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . __('This prefix is used for all automatically generated CSS classes. Choose a short, unique prefix to avoid conflicts with existing styles.', 'multilingual-js-wp') . '</p>';
+  
+  echo '<div style="margin-top: 15px; padding: 8px 10px; background: #fff2db; border-radius: 3px; font-size: 13px; line-height: 1.5;">';
+  echo '<strong>' . __('Usage:', 'multilingual-js-wp') . '</strong> ' . __('Enter "ml" to generate classes like ml-en, ml-ko, ml-num, etc.', 'multilingual-js-wp');
+  echo '</div>';
+  
+  echo '</div>';
+  echo '</details>';
+  
+  echo '<input type="text" name="' . esc_attr(MLWP_OPTION_KEY) . '[class_prefix]" value="' . esc_attr($opts['class_prefix']) . '" class="regular-text" style="width: 100%; max-width: 800px; border-radius: 0;" />';
 }
 
 function mlwp_field_auto_selectors()
 {
   $opts = mlwp_get_options();
   $val = implode("\n", (array) $opts['auto_selectors']);
-  echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[auto_selectors]" rows="6" class="large-text code">' . esc_textarea($val) . '</textarea>';
-  echo '<p class="description">' . __('Enter one per line (simple selectors like .class, tag.class recommended)', 'multilingual-js-wp') . '</p>';
+  
+  // 아코디언 형식으로 자세한 설명 추가
+  echo '<details style="max-width: 800px; margin-bottom: 15px;">';
+    echo '<summary style="padding: 7px 12px; background: #ffffff; cursor: pointer; color: #666; font-weight: 600; font-size: 13px;">';
+  echo __('View Usage', 'multilingual-js-wp');
+  echo '</summary>';
+  echo '<div style="padding: 13px; background: #fff; border-top: 1px solid #ddd; font-size: 13px;">';
+  
+  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . __('CSS selectors that automatically apply text wrapping when the page loads. Configure which elements should have their text processed for multilingual typography.', 'multilingual-js-wp') . '</p>';
+       
+  echo '<div style="margin-top: 15px; padding: 8px 10px; background: #fff2db; border-radius: 3px; font-size: 13px; line-height: 1.5;">';
+  echo '<strong>' . __('Usage:', 'multilingual-js-wp') . '</strong> ' . __('Enter one CSS selector per line. These elements will have their text automatically wrapped with language-specific classes.', 'multilingual-js-wp');
+  echo '</div>';
+  
+  echo '</div>';
+  echo '</details>';
+  
+  echo '<textarea style="width: 100%; max-width: 800px; border-radius: 0;" name="' . esc_attr(MLWP_OPTION_KEY) . '[auto_selectors]" rows="6" class="large-text code">' . esc_textarea($val) . '</textarea>';
 }
 
 function mlwp_field_exclude_selectors()
 {
   $opts = mlwp_get_options();
   $val = implode("\n", (array) $opts['exclude_selectors']);
-  echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[exclude_selectors]" rows="4" class="large-text code">' . esc_textarea($val) . '</textarea>';
-  echo '<p class="description">' . __('Enter one per line.<br>Example: <code>.about-content .point-color</code> (excludes the area and its child elements from wrapping)', 'multilingual-js-wp') . '</p>';
+  
+  // 아코디언 형식으로 자세한 설명 추가
+  echo '<details style="max-width: 800px; margin-bottom: 15px;">';
+  echo '<summary style="padding: 7px 12px; background: #ffffff; cursor: pointer; color: #666; font-weight: 600; font-size: 13px;">';
+  echo __('View Usage', 'multilingual-js-wp');
+  echo '</summary>';
+  echo '<div style="padding: 13px; background: #fff; border-top: 1px solid #ddd; font-size: 13px;">';
+  
+  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . __('CSS selectors that will be excluded from automatic text wrapping, even if they match auto-apply selectors. Use this to protect specific areas from processing.', 'multilingual-js-wp') . '</p>';
+  
+  echo '<div style="margin-top: 15px; padding: 8px 10px; background: #fff2db; border-radius: 3px; font-size: 13px; line-height: 1.5;">';
+  echo '<strong>' . __('Usage:', 'multilingual-js-wp') . '</strong> ' . __('Enter one CSS selector per line. These elements and their children will be excluded from text wrapping.', 'multilingual-js-wp') . '<br>';
+  echo '<strong>' . __('Important:', 'multilingual-js-wp') . '</strong> ' . __('Exclusion rules apply to the selected element AND all its child elements.', 'multilingual-js-wp');
+  echo '</div>';
+  
+  echo '</div>';
+  echo '</details>';
+  
+  echo '<textarea style="width: 100%; max-width: 800px; border-radius: 0;" name="' . esc_attr(MLWP_OPTION_KEY) . '[exclude_selectors]" rows="4" class="large-text code">' . esc_textarea($val) . '</textarea>';
 }
 
 function mlwp_field_shortcode_whitelist()
 {
   $opts = mlwp_get_options();
   $val = implode("\n", (array) $opts['shortcode_whitelist']);
-  echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[shortcode_whitelist]" rows="4" class="large-text code">' . esc_textarea($val) . '</textarea>';
-  echo '<p class="description">' . __('Enter shortcode tags one per line.<br>Example: <code>post_content</code>', 'multilingual-js-wp') . '</p>';
+  
+  // 아코디언 형식으로 자세한 설명 추가
+  echo '<details style="max-width: 800px; margin-bottom: 15px;">';
+  echo '<summary style="padding: 7px 12px; background: #ffffff; cursor: pointer; color: #666; font-weight: 600; font-size: 13px;">';
+  echo __('View Usage', 'multilingual-js-wp');
+  echo '</summary>';
+  echo '<div style="padding: 13px; background: #fff; border-top: 1px solid #ddd; font-size: 13px;">';
+  
+  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . __('Use this when applying multilingual typography to content within [...] format shortcodes from themes or plugins. Prevents text wrapping from being applied when brackets are recognized as punctuation.', 'multilingual-js-wp') . '</p>';
+  
+  echo '<div style="margin-top: 15px; padding: 8px 10px; background: #fff2db; border-radius: 3px; font-size: 13px; line-height: 1.5;">';
+  echo '<strong>' . __('Usage:', 'multilingual-js-wp') . '</strong> ' . __('Enter shortcode tag names one per line (without brackets []), example: [post_content] → post_content', 'multilingual-js-wp') . '<br>';
+  echo '<strong>' . __('Important:', 'multilingual-js-wp') . '</strong> ' . __('Only add shortcodes that output simple text content. Avoid shortcodes with complex HTML, forms, or interactive elements.', 'multilingual-js-wp');
+  echo '</div>';
+  
+  echo '</div>';
+  echo '</details>';
+  
+  echo '<textarea style="width: 100%; max-width: 800px; border-radius: 0;" name="' . esc_attr(MLWP_OPTION_KEY) . '[shortcode_whitelist]" rows="4" class="large-text code">' . esc_textarea($val) . '</textarea>';
 }
 
 function mlwp_field_custom_charsets()
 {
   $opts = mlwp_get_options();
+  
+  // 아코디언 형식으로 자세한 설명 추가
+  echo '<details style="max-width: 800px; margin-bottom: 15px;">';
+  echo '<summary style="padding: 7px 12px; background: #ffffff; cursor: pointer; color: #666; font-weight: 600; font-size: 13px;">';
+  echo __('View Usage', 'multilingual-js-wp');
+  echo '</summary>';
+  echo '<div style="padding: 13px; background: #fff; border-top: 1px solid #ddd; font-size: 13px;">';
+  
+  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . __('Define your own character types beyond the basic ones (English, Korean, Chinese, Japanese, numbers, punctuation). Create custom CSS classes for special characters that need unique styling.', 'multilingual-js-wp') . '</p>';
+  
+  echo '<div style="margin-bottom: 12px;"><strong>' . __('Format Examples:', 'multilingual-js-wp') . '</strong></div>';
+  echo '<ul style="margin: 0 0 12px 0; line-height: 1.6;">';
+  echo '<li><code>bullet:•◦▪▫</code> - ' . __('Bullet point symbols → .ml-bullet', 'multilingual-js-wp') . '</li>';
+  echo '<li><code>arrow:→←↑↓</code> - ' . __('Arrow symbols → .ml-arrow', 'multilingual-js-wp') . '</li>';
+  echo '</ul>';
+  
+  echo '<div style="margin-top: 15px; padding: 8px 10px; background: #fff2db; border-radius: 3px; font-size: 13px; line-height: 1.5;">';
+  echo '<strong>' . __('Usage:', 'multilingual-js-wp') . '</strong> ' . __('Enter one per line in type:charset format. Each type becomes a CSS class (.ml-typename).', 'multilingual-js-wp');
+  echo '</div>';
+  
+  echo '</div>';
+  echo '</details>';
   
   // 기존 JSON 형식을 간단한 형식으로 변환
   $simple_format = [];
@@ -151,14 +237,7 @@ function mlwp_field_custom_charsets()
   }
   
   $val = implode("\n", $simple_format);
-  echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[custom_charsets_simple]" rows="4" class="large-text code">' . esc_textarea($val) . '</textarea>';
-  echo '<p class="description">' . __('Enter one per line in <code>type:charset</code> format<br>Examples: <code>parentheses:{}</code>, <code>bullet:•</code>, <code>arrow:→←</code>', 'multilingual-js-wp') . '</p>';
-  
-  // 기존 JSON 형식도 유지 (고급 사용자용)
-  echo '<details style="margin-top:15px;"><summary style="cursor:pointer;font-weight:bold;">' . __('Advanced Settings (JSON Format)', 'multilingual-js-wp') . '</summary>';
-  echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[custom_charsets]" rows="6" class="large-text code" style="margin-top:10px;">' . esc_textarea(json_encode($opts['custom_charsets'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)) . '</textarea>';
-  echo '<p class="description">' . __('Direct JSON input (allows detailed settings like className)', 'multilingual-js-wp') . '</p>';
-  echo '</details>';
+  echo '<textarea style="width: 100%; max-width: 800px; border-radius: 0;" name="' . esc_attr(MLWP_OPTION_KEY) . '[custom_charsets_simple]" rows="4" class="large-text code">' . esc_textarea($val) . '</textarea>';
 }
 
 function mlwp_render_settings_page()
