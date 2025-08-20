@@ -2,11 +2,19 @@
 
 /**
  * Plugin Name: Multilingual.js for WordPress
- * Description: 오픈소스 라이브러리 multilingual.js를 워드프레스에 맞게 재구현하여 서버사이드 래핑으로 FOUC를 최소화, 첫 렌더부터 일관된 타이포그래피를 제공합니다.
+ * Description: Server-side text wrapping for consistent typography across languages. Wraps text in spans by language type to eliminate FOUC and provide enhanced multilingual design control.
  * Version: 1.1.0
  * Author: Everyday Practice
  * Plugin URI: https://github.com/everyday-practice/Multilingual.js-for-WordPress
  * Author URI: https://everyday-practice.com
+ * Text Domain: multilingual-js-wp
+ * Domain Path: /languages
+ * Requires at least: 6.0
+ * Tested up to: 6.8
+ * Requires PHP: 7.4
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Network: false
  */
 if (!defined('ABSPATH'))
 	exit;
@@ -16,7 +24,7 @@ if (!defined('ABSPATH'))
  */
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
 	$url = admin_url('options-general.php?page=mlwp-settings');
-	$settings_link = '<a href="' . esc_url($url) . '">Settings</a>';
+	$settings_link = '<a href="' . esc_url($url) . '">' . __('Settings', 'multilingual-js-wp') . '</a>';
 	array_unshift($links, $settings_link);
 	return $links;
 });
@@ -681,6 +689,14 @@ function mlwp_register_hooks()
 	// 분리된 JS 로드 및 설정 주입
 	add_action('wp_enqueue_scripts', 'mlwp_enqueue_scripts', 20);
 }
+
+/**
+ * Load plugin textdomain for internationalization
+ */
+function mlwp_load_textdomain() {
+	load_plugin_textdomain('multilingual-js-wp', false, dirname(plugin_basename(__FILE__)) . '/languages');
+}
+add_action('plugins_loaded', 'mlwp_load_textdomain');
 
 // 기본 훅 등록 (항상 실행)
 add_action('init', 'mlwp_register_hooks');

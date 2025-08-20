@@ -18,8 +18,8 @@ function mlwp_default_options()
 
 add_action('admin_menu', function () {
   add_options_page(
-    'Multilingual 설정',
-    'Multilingual 설정',
+    __('Multilingual Settings', 'multilingual-js-wp'),
+    __('Multilingual Settings', 'multilingual-js-wp'),
     'manage_options',
     'mlwp-settings',
     'mlwp_render_settings_page'
@@ -31,16 +31,16 @@ add_action('admin_init', function () {
     'sanitize_callback' => 'mlwp_sanitize_options'
   ]);
 
-  add_settings_section('mlwp_main', '기본 설정', function () {
-    echo '<p>래핑 대상 타입, 클래스 프리픽스, 자동 적용 셀렉터, 예외 셀렉터, 숏코드 화이트리스트, 커스텀 문자세트를 설정합니다.</p>';
+  add_settings_section('mlwp_main', __('Basic Settings', 'multilingual-js-wp'), function () {
+    echo '<p>' . __('Configure text wrapping types, class prefix, auto-apply selectors, exclusion selectors, shortcode whitelist, and custom character sets.', 'multilingual-js-wp') . '</p>';
   }, 'mlwp-settings');
 
-  add_settings_field('mlwp_types', '래핑 대상 타입', 'mlwp_field_types', 'mlwp-settings', 'mlwp_main');
-  add_settings_field('mlwp_class_prefix', '클래스 프리픽스', 'mlwp_field_class_prefix', 'mlwp-settings', 'mlwp_main');
-  add_settings_field('mlwp_auto_selectors', '자동 적용 셀렉터', 'mlwp_field_auto_selectors', 'mlwp-settings', 'mlwp_main');
-  add_settings_field('mlwp_exclude_selectors', '예외 셀렉터(제외)', 'mlwp_field_exclude_selectors', 'mlwp-settings', 'mlwp_main');
-  add_settings_field('mlwp_shortcode_whitelist', '숏코드 화이트리스트', 'mlwp_field_shortcode_whitelist', 'mlwp-settings', 'mlwp_main');
-  add_settings_field('mlwp_custom_charsets', '커스텀 문자세트', 'mlwp_field_custom_charsets', 'mlwp-settings', 'mlwp_main');
+  add_settings_field('mlwp_types', __('Text Wrapping Types', 'multilingual-js-wp'), 'mlwp_field_types', 'mlwp-settings', 'mlwp_main');
+  add_settings_field('mlwp_class_prefix', __('CSS Class Prefix', 'multilingual-js-wp'), 'mlwp_field_class_prefix', 'mlwp-settings', 'mlwp_main');
+  add_settings_field('mlwp_auto_selectors', __('Auto-Apply Selectors', 'multilingual-js-wp'), 'mlwp_field_auto_selectors', 'mlwp-settings', 'mlwp_main');
+  add_settings_field('mlwp_exclude_selectors', __('Exclusion Selectors', 'multilingual-js-wp'), 'mlwp_field_exclude_selectors', 'mlwp-settings', 'mlwp_main');
+  add_settings_field('mlwp_shortcode_whitelist', __('Shortcode Whitelist', 'multilingual-js-wp'), 'mlwp_field_shortcode_whitelist', 'mlwp-settings', 'mlwp_main');
+  add_settings_field('mlwp_custom_charsets', __('Custom Character Sets', 'multilingual-js-wp'), 'mlwp_field_custom_charsets', 'mlwp-settings', 'mlwp_main');
 });
 
 function mlwp_get_options()
@@ -55,7 +55,14 @@ function mlwp_get_options()
 function mlwp_field_types()
 {
   $opts = mlwp_get_options();
-  $basic = ['en' => '영문(en)', 'ko' => '한글(ko)', 'cn' => '중문(cn)', 'jp' => '일문(jp)', 'num' => '숫자(num)', 'punct' => '문장부호(punct)'];
+  $basic = [
+    'en' => __('English (en)', 'multilingual-js-wp'), 
+    'ko' => __('Korean (ko)', 'multilingual-js-wp'), 
+    'cn' => __('Chinese (cn)', 'multilingual-js-wp'), 
+    'jp' => __('Japanese (jp)', 'multilingual-js-wp'), 
+    'num' => __('Numbers (num)', 'multilingual-js-wp'), 
+    'punct' => __('Punctuation (punct)', 'multilingual-js-wp')
+  ];
   
   // 커스텀 문자세트에서 추가 타입 수집 (표시용)
   $custom_types = [];
@@ -84,21 +91,21 @@ function mlwp_field_types()
   // 커스텀 타입은 읽기 전용으로 표시
   if (!empty($custom_types)) {
     echo '<div style="margin-top:10px;padding:10px;background:#ffffff;border-left:2px solid#c91c1c;">';
-    echo '<strong>커스텀 문자세트 (자동 활성화됨):</strong><br>';
+    echo '<strong>' . __('Custom Character Sets (Auto-enabled):', 'multilingual-js-wp') . '</strong><br>';
     foreach ($custom_types as $key => $label) {
       echo '<span style="display:inline-block;margin-right:15px;color:#c91c1c;">✓ ' . esc_html($label) . '</span>';
     }
     echo '</div>';
   }
   
-  echo '<p class="description">커스텀 문자세트에 입력하면 별도 체크 없이 자동으로 적용됩니다.</p>';
+  echo '<p class="description">' . __('Custom character sets are automatically applied when defined below.', 'multilingual-js-wp') . '</p>';
 }
 
 function mlwp_field_class_prefix()
 {
   $opts = mlwp_get_options();
   echo '<input type="text" name="' . esc_attr(MLWP_OPTION_KEY) . '[class_prefix]" value="' . esc_attr($opts['class_prefix']) . '" class="regular-text" />';
-  echo '<p class="description">예: <code>ml</code> → <code>ml-en</code>, <code>ml-num</code></p>';
+  echo '<p class="description">' . __('Example: <code>ml</code> → <code>ml-en</code>, <code>ml-num</code>', 'multilingual-js-wp') . '</p>';
 }
 
 function mlwp_field_auto_selectors()
@@ -106,7 +113,7 @@ function mlwp_field_auto_selectors()
   $opts = mlwp_get_options();
   $val = implode("\n", (array) $opts['auto_selectors']);
   echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[auto_selectors]" rows="6" class="large-text code">' . esc_textarea($val) . '</textarea>';
-  echo '<p class="description">한 줄에 하나씩 입력 (.class, tag.class 등 단순 셀렉터 권장)</p>';
+  echo '<p class="description">' . __('Enter one per line (simple selectors like .class, tag.class recommended)', 'multilingual-js-wp') . '</p>';
 }
 
 function mlwp_field_exclude_selectors()
@@ -114,7 +121,7 @@ function mlwp_field_exclude_selectors()
   $opts = mlwp_get_options();
   $val = implode("\n", (array) $opts['exclude_selectors']);
   echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[exclude_selectors]" rows="4" class="large-text code">' . esc_textarea($val) . '</textarea>';
-  echo '<p class="description">한 줄에 하나씩 입력. <br>예: <code>.about-content .point-color</code> (해당 영역과 하위 요소는 래핑에서 제외)</p>';
+  echo '<p class="description">' . __('Enter one per line.<br>Example: <code>.about-content .point-color</code> (excludes the area and its child elements from wrapping)', 'multilingual-js-wp') . '</p>';
 }
 
 function mlwp_field_shortcode_whitelist()
@@ -122,7 +129,7 @@ function mlwp_field_shortcode_whitelist()
   $opts = mlwp_get_options();
   $val = implode("\n", (array) $opts['shortcode_whitelist']);
   echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[shortcode_whitelist]" rows="4" class="large-text code">' . esc_textarea($val) . '</textarea>';
-  echo '<p class="description">한 줄에 하나씩 숏코드 태그 입력. <br>예: <code> post_content</code></p>';
+  echo '<p class="description">' . __('Enter shortcode tags one per line.<br>Example: <code>post_content</code>', 'multilingual-js-wp') . '</p>';
 }
 
 function mlwp_field_custom_charsets()
@@ -145,13 +152,12 @@ function mlwp_field_custom_charsets()
   
   $val = implode("\n", $simple_format);
   echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[custom_charsets_simple]" rows="4" class="large-text code">' . esc_textarea($val) . '</textarea>';
-  echo '<p class="description">한 줄에 하나씩 <code>타입명:문자세트</code> 형식으로 입력<br>';
-  echo '예: <code>parentheses:{}</code>, <code>bullet:•</code>, <code>arrow:→←</code></p>';
+  echo '<p class="description">' . __('Enter one per line in <code>type:charset</code> format<br>Examples: <code>parentheses:{}</code>, <code>bullet:•</code>, <code>arrow:→←</code>', 'multilingual-js-wp') . '</p>';
   
   // 기존 JSON 형식도 유지 (고급 사용자용)
-  echo '<details style="margin-top:15px;"><summary style="cursor:pointer;font-weight:bold;">고급 설정 (JSON 형식)</summary>';
+  echo '<details style="margin-top:15px;"><summary style="cursor:pointer;font-weight:bold;">' . __('Advanced Settings (JSON Format)', 'multilingual-js-wp') . '</summary>';
   echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[custom_charsets]" rows="6" class="large-text code" style="margin-top:10px;">' . esc_textarea(json_encode($opts['custom_charsets'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)) . '</textarea>';
-  echo '<p class="description">JSON 형식으로 직접 입력 (className 등 세부 설정 가능)</p>';
+  echo '<p class="description">' . __('Direct JSON input (allows detailed settings like className)', 'multilingual-js-wp') . '</p>';
   echo '</details>';
 }
 
@@ -160,7 +166,7 @@ function mlwp_render_settings_page()
   if (!current_user_can('manage_options'))
     return;
   echo '<div class="wrap">';
-  echo '<h1>Multilingual 설정</h1>';
+  echo '<h1>' . esc_html__('Multilingual Settings', 'multilingual-js-wp') . '</h1>';
   echo '<form action="options.php" method="post">';
   settings_fields('mlwp_settings_group');
   do_settings_sections('mlwp-settings');
@@ -170,6 +176,11 @@ function mlwp_render_settings_page()
 
 function mlwp_sanitize_options($input)
 {
+  // Verify nonce for security
+  if (!isset($_POST['_wpnonce']) || !wp_verify_nonce($_POST['_wpnonce'], 'mlwp_settings_group-options')) {
+    return false;
+  }
+  
   $defaults = mlwp_default_options();
   $out = [];
 
@@ -193,15 +204,15 @@ function mlwp_sanitize_options($input)
   if ($out['class_prefix'] === '')
     $out['class_prefix'] = $defaults['class_prefix'];
 
-  $out['auto_selectors'] = mlwp_textarea_to_array($input['auto_selectors'] ?? '', $defaults['auto_selectors']);
-  $out['exclude_selectors'] = mlwp_textarea_to_array($input['exclude_selectors'] ?? '', $defaults['exclude_selectors']);
-  $out['shortcode_whitelist'] = mlwp_textarea_to_array($input['shortcode_whitelist'] ?? '', $defaults['shortcode_whitelist']);
+  $out['auto_selectors'] = mlwp_textarea_to_array(sanitize_textarea_field($input['auto_selectors'] ?? ''), $defaults['auto_selectors']);
+  $out['exclude_selectors'] = mlwp_textarea_to_array(sanitize_textarea_field($input['exclude_selectors'] ?? ''), $defaults['exclude_selectors']);
+  $out['shortcode_whitelist'] = mlwp_textarea_to_array(sanitize_textarea_field($input['shortcode_whitelist'] ?? ''), $defaults['shortcode_whitelist']);
 
   $out['custom_charsets'] = $defaults['custom_charsets'];
   
   // 1) 간단한 형식 처리 (우선순위) - 빈 값도 처리
   if (isset($input['custom_charsets_simple'])) {
-    $simple_text = trim($input['custom_charsets_simple']);
+    $simple_text = trim(sanitize_textarea_field($input['custom_charsets_simple']));
     
     if (empty($simple_text)) {
       // 빈 값이면 커스텀 문자세트 완전 삭제
@@ -214,6 +225,8 @@ function mlwp_sanitize_options($input)
       foreach ($simple_lines as $line) {
         if (strpos($line, ':') !== false) {
           list($type, $charset) = array_map('trim', explode(':', $line, 2));
+          $type = sanitize_key($type);
+          $charset = sanitize_text_field($charset);
           if ($type && $charset) {
             $custom_charsets[] = [
               $type => [
