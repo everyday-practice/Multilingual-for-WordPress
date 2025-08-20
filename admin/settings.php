@@ -40,7 +40,7 @@ add_action('admin_init', function () {
   add_settings_field('mlwp_auto_selectors', '자동 적용 셀렉터', 'mlwp_field_auto_selectors', 'mlwp-settings', 'mlwp_main');
   add_settings_field('mlwp_exclude_selectors', '예외 셀렉터(제외)', 'mlwp_field_exclude_selectors', 'mlwp-settings', 'mlwp_main');
   add_settings_field('mlwp_shortcode_whitelist', '숏코드 화이트리스트', 'mlwp_field_shortcode_whitelist', 'mlwp-settings', 'mlwp_main');
-  add_settings_field('mlwp_custom_charsets', '커스텀 문자세트(JSON)', 'mlwp_field_custom_charsets', 'mlwp-settings', 'mlwp_main');
+  add_settings_field('mlwp_custom_charsets', '커스텀 문자세트', 'mlwp_field_custom_charsets', 'mlwp-settings', 'mlwp_main');
 });
 
 function mlwp_get_options()
