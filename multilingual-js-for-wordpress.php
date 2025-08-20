@@ -3,6 +3,7 @@
 /**
  * Plugin Name: Multilingual.js for WordPress
  * Description: Server-side text wrapping for consistent typography across languages. Wraps text in spans by language type to eliminate FOUC and provide enhanced multilingual design control.
+ * Description(ko_KR): 어도비 인디자인의 합성글꼴(섞어짜기)처럼 보다 섬세하게 다국어 섞어쓰기를 제어하기 위한 플러그인입니다. 오픈소스 라이브러리 multilingual.js를 워드프레스에 맞게 재구현하여 서버사이드 래핑으로 스타일 지연 현상을 방지합니다.
  * Version: 1.1.0
  * Author: Everyday Practice
  * Plugin URI: https://github.com/everyday-practice/Multilingual.js-for-WordPress
