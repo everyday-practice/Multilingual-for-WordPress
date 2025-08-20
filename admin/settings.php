@@ -55,15 +55,43 @@ function mlwp_get_options()
 function mlwp_field_types()
 {
   $opts = mlwp_get_options();
-  $all = ['en' => '영문(en)', 'ko' => '한글(ko)', 'cn' => '중문(cn)', 'jp' => '일문(jp)', 'num' => '숫자(num)', 'punct' => '문장부호(punct)'];
+  $basic = ['en' => '영문(en)', 'ko' => '한글(ko)', 'cn' => '중문(cn)', 'jp' => '일문(jp)', 'num' => '숫자(num)', 'punct' => '문장부호(punct)'];
+  
+  // 커스텀 문자세트에서 추가 타입 수집 (표시용)
+  $custom_types = [];
+  if (!empty($opts['custom_charsets']) && is_array($opts['custom_charsets'])) {
+    foreach ($opts['custom_charsets'] as $customSet) {
+      if (is_array($customSet)) {
+        foreach ($customSet as $key => $data) {
+          if (!isset($basic[$key])) {
+            $custom_types[$key] = $key;
+          }
+        }
+      }
+    }
+  }
+  
   echo '<fieldset>';
-  foreach ($all as $key => $label) {
+  // 기본 타입만 체크박스로 표시
+  foreach ($basic as $key => $label) {
     $checked = in_array($key, (array) $opts['types'], true) ? 'checked' : '';
     echo '<label style="display:inline-block;margin-right:12px !important;">';
     echo '<input type="checkbox" name="' . esc_attr(MLWP_OPTION_KEY) . '[types][]" value="' . esc_attr($key) . '" ' . $checked . '> ' . esc_html($label);
     echo '</label>';
   }
   echo '</fieldset>';
+  
+  // 커스텀 타입은 읽기 전용으로 표시
+  if (!empty($custom_types)) {
+    echo '<div style="margin-top:10px;padding:10px;background:#ffffff;border-left:2px solid#c91c1c;">';
+    echo '<strong>커스텀 문자세트 (자동 활성화됨):</strong><br>';
+    foreach ($custom_types as $key => $label) {
+      echo '<span style="display:inline-block;margin-right:15px;color:#c91c1c;">✓ ' . esc_html($label) . '</span>';
+    }
+    echo '</div>';
+  }
+  
+  echo '<p class="description">커스텀 문자세트에 입력하면 별도 체크 없이 자동으로 적용됩니다.</p>';
 }
 
 function mlwp_field_class_prefix()
@@ -100,9 +128,31 @@ function mlwp_field_shortcode_whitelist()
 function mlwp_field_custom_charsets()
 {
   $opts = mlwp_get_options();
-  $json = json_encode($opts['custom_charsets'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-  echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[custom_charsets]" rows="6" class="large-text code">' . esc_textarea($json) . '</textarea>';
-  echo '<p class="description">예: <code>{"parentheses":{"className":"ml-parentheses","charset":"()（）"}}</code></p>';
+  
+  // 기존 JSON 형식을 간단한 형식으로 변환
+  $simple_format = [];
+  if (!empty($opts['custom_charsets']) && is_array($opts['custom_charsets'])) {
+    foreach ($opts['custom_charsets'] as $customSet) {
+      if (is_array($customSet)) {
+        foreach ($customSet as $key => $data) {
+          if (isset($data['charset'])) {
+            $simple_format[] = $key . ':' . $data['charset'];
+          }
+        }
+      }
+    }
+  }
+  
+  $val = implode("\n", $simple_format);
+  echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[custom_charsets_simple]" rows="4" class="large-text code">' . esc_textarea($val) . '</textarea>';
+  echo '<p class="description">한 줄에 하나씩 <code>타입명:문자세트</code> 형식으로 입력<br>';
+  echo '예: <code>parentheses:{}</code>, <code>bullet:•</code>, <code>arrow:→←</code></p>';
+  
+  // 기존 JSON 형식도 유지 (고급 사용자용)
+  echo '<details style="margin-top:15px;"><summary style="cursor:pointer;font-weight:bold;">고급 설정 (JSON 형식)</summary>';
+  echo '<textarea name="' . esc_attr(MLWP_OPTION_KEY) . '[custom_charsets]" rows="6" class="large-text code" style="margin-top:10px;">' . esc_textarea(json_encode($opts['custom_charsets'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)) . '</textarea>';
+  echo '<p class="description">JSON 형식으로 직접 입력 (className 등 세부 설정 가능)</p>';
+  echo '</details>';
 }
 
 function mlwp_render_settings_page()
@@ -123,7 +173,11 @@ function mlwp_sanitize_options($input)
   $defaults = mlwp_default_options();
   $out = [];
 
-  $allowed_types = ['en', 'ko', 'cn', 'jp', 'num', 'punct'];
+  $basic_types = ['en', 'ko', 'cn', 'jp', 'num', 'punct'];
+  
+  // 커스텀 타입은 항상 허용 (별도 체크 불필요)
+  $allowed_types = $basic_types;
+  
   $out['types'] = [];
   if (!empty($input['types']) && is_array($input['types'])) {
     foreach ($input['types'] as $t) {
@@ -144,12 +198,49 @@ function mlwp_sanitize_options($input)
   $out['shortcode_whitelist'] = mlwp_textarea_to_array($input['shortcode_whitelist'] ?? '', $defaults['shortcode_whitelist']);
 
   $out['custom_charsets'] = $defaults['custom_charsets'];
-  if (isset($input['custom_charsets'])) {
+  
+  // 1) 간단한 형식 처리 (우선순위) - 빈 값도 처리
+  if (isset($input['custom_charsets_simple'])) {
+    $simple_text = trim($input['custom_charsets_simple']);
+    
+    if (empty($simple_text)) {
+      // 빈 값이면 커스텀 문자세트 완전 삭제
+      $out['custom_charsets'] = [];
+    } else {
+      // 내용이 있으면 파싱 처리
+      $simple_lines = array_filter(array_map('trim', explode("\n", $simple_text)));
+      $custom_charsets = [];
+      
+      foreach ($simple_lines as $line) {
+        if (strpos($line, ':') !== false) {
+          list($type, $charset) = array_map('trim', explode(':', $line, 2));
+          if ($type && $charset) {
+            $custom_charsets[] = [
+              $type => [
+                'className' => 'ml-' . $type,
+                'charset' => $charset
+              ]
+            ];
+          }
+        }
+      }
+      
+      $out['custom_charsets'] = $custom_charsets;
+    }
+  } 
+  // 2) JSON 형식 처리 (간단한 형식이 없을 때만)
+  elseif (isset($input['custom_charsets'])) {
     $raw = $input['custom_charsets'];
     if (is_string($raw)) {
-      $decoded = json_decode(wp_unslash($raw), true);
-      if (is_array($decoded)) {
-        $out['custom_charsets'] = $decoded;
+      $raw = trim($raw);
+      if (empty($raw)) {
+        // JSON 필드가 비어있으면 삭제
+        $out['custom_charsets'] = [];
+      } else {
+        $decoded = json_decode(wp_unslash($raw), true);
+        if (is_array($decoded)) {
+          $out['custom_charsets'] = $decoded;
+        }
       }
     } elseif (is_array($raw)) {
       $out['custom_charsets'] = $raw;

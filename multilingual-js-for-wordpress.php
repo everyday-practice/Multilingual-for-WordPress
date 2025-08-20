@@ -42,8 +42,24 @@ function mlwp_get_config()
 
 	$opts = get_option('mlwp_options', []);
 
-	$allowed_types = ['en', 'ko', 'cn', 'jp', 'num', 'punct'];
-	$types = isset($opts['types']) ? array_values(array_intersect($allowed_types, (array) $opts['types'])) : $defaults['types'];
+	// 기본 타입 처리
+	$basic_types = ['en', 'ko', 'cn', 'jp', 'num', 'punct'];
+	$selected_basic_types = isset($opts['types']) ? array_values(array_intersect($basic_types, (array) $opts['types'])) : $defaults['types'];
+	
+	// 커스텀 타입 자동 추가 (별도 체크 불필요)
+	$custom_types = [];
+	if (!empty($opts['custom_charsets']) && is_array($opts['custom_charsets'])) {
+		foreach ($opts['custom_charsets'] as $customSet) {
+			if (is_array($customSet)) {
+				foreach ($customSet as $key => $data) {
+					$custom_types[] = $key;
+				}
+			}
+		}
+	}
+	
+	// 기본 타입 + 커스텀 타입 자동 병합
+	$types = array_merge($selected_basic_types, $custom_types);
 	if (empty($types))
 		$types = $defaults['types'];
 
@@ -105,7 +121,8 @@ function mlwp_enqueue_scripts()
  */
 function mlwp_get_patterns()
 {
-	return [
+	// 기본 패턴
+	$patterns = [
 		'en' => '[A-Za-z]+',
 		'ko' => '[\x{3131}-\x{318E}\x{AC00}-\x{D7A3}]+',
 		'cn' => '[\x{4E00}-\x{9FBF}]+',
@@ -113,6 +130,47 @@ function mlwp_get_patterns()
 		'num' => '[0-9]+',
 		'punct' => '[\[\]（）().#^\-&,;:@%*，、。」\'"‘’“”«»–—…]+',
 	];
+	
+	// 커스텀 문자세트 병합 (무한 재귀 방지를 위해 직접 옵션 가져오기)
+	$opts = get_option('mlwp_options', []);
+	if (!empty($opts['custom_charsets']) && is_array($opts['custom_charsets'])) {
+		foreach ($opts['custom_charsets'] as $customSet) {
+			if (is_array($customSet)) {
+				foreach ($customSet as $key => $data) {
+					if (isset($data['charset']) && is_string($data['charset'])) {
+						$charset = $data['charset'];
+						
+						// 완성된 정규식 패턴인지 확인 (양 끝에 구분자가 있고 플래그가 있는 경우)
+						if (preg_match('/^\/.*\/[gimuy]*$/', $charset)) {
+							// 완성된 정규식이면 구분자 제거 후 사용
+							$patterns[$key] = preg_replace('/^\/(.*)\/[gimuy]*$/', '$1', $charset);
+						} else {
+							// 단순 문자열로 처리 - 모든 문자를 안전하게 이스케이프
+							$chars = preg_split('//u', $charset, -1, PREG_SPLIT_NO_EMPTY);
+							if (count($chars) === 1) {
+								// 단일 문자면 이스케이프 후 + 추가
+								$patterns[$key] = preg_quote($charset, '/') . '+';
+							} else {
+								// 여러 문자면 각각 이스케이프 후 문자 클래스로 변환
+								$escaped_chars = array_map(function($char) {
+									return preg_quote($char, '/');
+								}, $chars);
+								$patterns[$key] = '[' . implode('', $escaped_chars) . ']+';
+							}
+						}
+						
+						// 패턴 유효성 검사
+						$test_pattern = '/' . $patterns[$key] . '/u';
+						if (@preg_match($test_pattern, '') === false) {
+							unset($patterns[$key]); // 유효하지 않은 패턴 제거
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	return $patterns;
 }
 
 /**
@@ -123,12 +181,26 @@ function mlwp_get_patterns()
 function mlwp_build_combined_regex(array $types)
 {
 	$all = mlwp_get_patterns();
+	$basic_types = ['en', 'ko', 'cn', 'jp', 'num', 'punct'];
+	$custom_types = array_diff($types, $basic_types);
+	$basic_active = array_intersect($types, $basic_types);
+	
 	$parts = [];
-	foreach ($types as $t) {
+	
+	// 1) 커스텀 타입 먼저 처리 (우선순위 높음)
+	foreach ($custom_types as $t) {
 		if (isset($all[$t])) {
 			$parts[] = '(' . $all[$t] . ')';
 		}
 	}
+	
+	// 2) 기본 타입 나중에 처리
+	foreach ($basic_active as $t) {
+		if (isset($all[$t])) {
+			$parts[] = '(' . $all[$t] . ')';
+		}
+	}
+	
 	if (empty($parts))
 		return null;
 	return '/' . implode('|', $parts) . '/u';
@@ -416,6 +488,12 @@ function mlwp_wrap_html_inside_selectors($html, array $selectors, array $types, 
 	// 동적 클래스를 고려한 확장된 예외 선택자 사용
 	$expandedExcludeSelectors = mlwp_expand_exclude_selectors_for_dynamic_classes($excludeSelectors);
 	
+	// 타입 순서를 정규식과 동일하게 정렬 (커스텀 먼저, 기본 나중)
+	$basic_types = ['en', 'ko', 'cn', 'jp', 'num', 'punct'];
+	$custom_types = array_diff($types, $basic_types);
+	$basic_active = array_intersect($types, $basic_types);
+	$sorted_types = array_merge($custom_types, $basic_active);
+	
 	$regex = mlwp_build_combined_regex($types);
 	foreach ($targetNodes as $el) {
 		// Build exclude set per root, using expanded selectors
@@ -463,7 +541,7 @@ function mlwp_wrap_html_inside_selectors($html, array $selectors, array $types, 
 			} elseif ($node->nodeType === XML_TEXT_NODE) {
 				if (mlwp_parent_is_wrapped_span($node, $classPrefix))
 					continue;
-				mlwp_wrap_text_node($doc, $node, $regex, $types, $classPrefix);
+				mlwp_wrap_text_node($doc, $node, $regex, $sorted_types, $classPrefix);
 			}
 		}
 	}
@@ -630,7 +708,7 @@ add_action('init', function () {
 		// 1) JSON 응답일 경우, 예상 키에서 HTML 텍스트를 찾아 래핑
 		$decoded = json_decode($buffer, true);
 		if (is_array($decoded)) {
-			$keys = ['template', 'html', 'content', 'rendered', 'markup', 'output'];
+			$keys = ['template', 'html', 'content', 'rendered', 'markup', 'output', 'data', 'result', 'response', 'body', 'posts', 'items'];
 			$walker = function (&$node) use (&$walker, $keys) {
 				if (is_array($node)) {
 					foreach ($node as $k => &$v) {

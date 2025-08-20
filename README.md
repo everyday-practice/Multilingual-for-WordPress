@@ -29,20 +29,30 @@
   - 예: `.about-content .point-color`
 - **숏코드 화이트리스트(shortcode_whitelist)**: 지정한 숏코드 출력에 서버사이드 래핑 적용
   - 예: `post_content`
-
-> 참고: 관리자 화면에서 “커스텀 문자세트(custom_charsets)” 입력란이 있으나, 현재 버전(1.1.0)에서는 서버/클라이언트 래퍼가 해당 설정을 사용하지 않습니다(향후 확장 예약).
+- **커스텀 문자세트(custom_charsets)**: 사용자 정의 문자 타입과 패턴 추가
+  - 한 줄에 하나씩 `타입명:문자세트` 형식으로 입력
+  - 예: `parentheses:(){}[]`, `bullet:•`, `arrow:→←↑↓`
 
 ## 🧠 동작 개요
 
 - 프론트엔드에서 플러그인 스크립트를 등록하고, 설정을 `window.MLWP_CFG`로 인라인 주입합니다.
-- 서버사이드 래핑은 다음에 적용됩니다.
-  - 블록 렌더 결과(`render_block`)
-  - 본문 콘텐츠(`the_content`)
-  - 화이트리스트에 포함된 숏코드 출력(`do_shortcode_tag`)
-- AJAX/REST 응답에서도 HTML/템플릿 같은 문자열을 찾아 서버사이드 래핑을 시도합니다.
-  - `admin-ajax.php` 출력 버퍼 후처리
-  - `rest_post_dispatch` 응답 데이터 후처리
-- 클라이언트 사이드 스크립트는 `MutationObserver`로 동적 DOM 변화를 감지하며, `auto_selectors`에 매칭되는 요소에 보조 래핑을 수행합니다.
+- 서버사이드 래핑 적용 지점: `render_block`, `the_content`, 선택적 `do_shortcode_tag`.
+- 클라이언트 사이드 스크립트는 `MutationObserver`로 동적 DOM 변화를 감지하며 `auto_selectors` 대상에 보조 래핑을 수행합니다.
+- AJAX/REST 및 에디터/인터랙션 환경에서의 예외와 세부 동작은 아래 Interactivity 섹션을 참고하세요.
+
+## 🧩 Interactivity API 및 최신 변경 사항 대응
+
+- DOM 업데이트 추적: `MutationObserver`로 자동 감지, 필요 시 `window.MLWP_APPLY(root)`로 수동 재적용.
+- 서버사이드 적용/예외:
+  - `render_block`: 프론트 요청에서만 적용, 관리자/REST 블록 렌더러 제외.
+  - `the_content`: 본문 출력 단계 적용.
+  - `do_shortcode_tag`: `shortcode_whitelist`에 등록된 항목에만 적용.
+  - `admin-ajax.php`: 비관리자 AJAX 응답을 버퍼링해 JSON/HTML에서 HTML을 조건부 래핑. JSON은 `template/html/content/rendered/markup/output` 키 우선 탐색.
+  - REST `rest_post_dispatch`: `context=edit` 또는 `/wp/v2/block-renderer` 제외. 데이터 전체를 순회하며 위와 같은 키에서 HTML을 조건부 래핑.
+- 호환되는 AJAX 기반 플러그인: FacetWP, Search & Filter, Ajax Load More 등 대부분의 플러그인이 `admin-ajax.php` 또는 REST로 HTML/JSON을 반환하는 경우 자동 래핑이 적용됩니다. 플러그인 템플릿 구조에 따라 `예외 셀렉터`를 조정하는 것을 권장합니다.
+- 제외/보호:
+  - `예외 셀렉터`로 지정한 영역(하위 포함)은 서버/클라이언트 모두 래핑하지 않습니다.
+  - 보호 토큰: `{{ ... }}` 및 화이트리스트된 숏코드 본문은 원문 유지.
 
 ## 🔤 지원 타입과 클래스
 
@@ -51,17 +61,32 @@
 - **중문(cn)**: `ml-cn` (`[\u4E00-\u9FBF]+`)
 - **일문(jp)**: `ml-jp` (`[\u3040-\u309F\u30A0-\u30FF]+`)
 - **숫자(num)**: `ml-num` (`[0-9]+`)
-- **문장부호(punct)**: `ml-punct` (`[（）().#^\-&,;:@%*，、。」'"‘’“”«»–—…]+`)
+- **문장부호(punct)**: `ml-punct` (`[（）().#^\-&,;:@%*，、。」'"''""«»–—…]+`)
 
-클래스 접두사는 설정의 `class_prefix`를 따릅니다. 기본은 `ml-`입니다.
+### 커스텀 문자세트
+
+설정에서 추가할 수 있는 사용자 정의 타입입니다. 다음과 같은 형식으로 입력합니다:
+
+```
+parentheses:(){}[]
+bullet:•◦▪▫
+arrow:→←↑↓
+emoji:😀😃��
+currency:$€¥₩
+```
 
 ## 📘 사용법
 
 ### ⚡️ 1) 자동 적용(권장)
 
-관리자 설정의 `자동 적용 셀렉터(auto_selectors)`에 원하는 셀렉터를 추가하세요.
+WordPress 관리자 → 플러그인 설정에서 **자동 적용 셀렉터(Auto Selectors)**에 원하는 CSS 선택자를 추가하세요.
 
-예: `.project_text`
+**자동 적용 셀렉터 설정 예시**:
+
+- `.project_text` (특정 클래스)
+- `p` (모든 문단)
+- `article` (아티클 요소)
+- `.content, .entry-content` (여러 선택자)
 
 ```html
 <div class="project_text">Hello World 123! 안녕하세요</div>
@@ -75,61 +100,68 @@
 
 ```html
 <script>
-  // 문서 전체에 대해 다시 적용
+  // 전체 문서에 대해 적용 (권장)
   window.MLWP_APPLY(document);
-  // 또는 특정 루트 요소만 대상으로 적용
-  const root = document.querySelector('.project_text');
-  window.MLWP_APPLY(root);
 </script>
+```
+
+**⚠️ 중요**: `window.MLWP_APPLY()` 함수는 WordPress 관리자에서 설정한 **자동 적용 셀렉터**에 해당하는 요소들에만 적용됩니다.
+
+- 특정 요소만 대상으로 하려면, 해당 선택자가 자동 적용 셀렉터에 등록되어 있어야 합니다.
+- 자동 적용 셀렉터가 비어있으면 `window.MLWP_APPLY()`는 아무 작업도 수행하지 않습니다.
+
+**동작 방식 이해**:
+
+`window.MLWP_APPLY(root)`는 **root 내부에서** 자동 적용 셀렉터에 등록된 선택자들을 찾습니다.
+
+```javascript
+// 자동 적용 셀렉터에 '.project_text'가 등록되어 있는 경우:
+
+// ✅ 작동함 - 전체 문서에서 .project_text 요소들을 찾아 적용
+window.MLWP_APPLY(document);
+// → document.querySelectorAll('.project_text')
+
+// ❌ 작동하지 않는 경우
+const root = document.querySelector('.project_text');
+window.MLWP_APPLY(root);
+// → root.querySelectorAll('.project_text')
+// .project_text 요소 내부에는 또 다른 .project_text가 없음!
+
+// ✅ 올바른 사용법
+const container = document.querySelector('.container');
+window.MLWP_APPLY(container);
+// → container 내부에 있는 .project_text 요소들을 찾아 적용
 ```
 
 ## 🚫 예외 처리와 제외 셀렉터
 
 - 다음 태그 내부 텍스트는 래핑 대상에서 제외됩니다: `script`, `style`, `code`, `pre`, `textarea`, `kbd`, `samp`
-- `exclude_selectors`에 지정한 영역(및 하위 요소)은 서버/클라이언트 모두에서 래핑하지 않습니다.
+- `예외 셀렉터`에 지정한 영역(및 하위 요소)은 서버/클라이언트 모두에서 래핑하지 않습니다.
 - 대괄호로 감싼 세그먼트(`[ ... ]`)는 서버사이드에서 보호되어 원문이 유지되도록 처리합니다.
 
 ## ⚠️ 성능 주의사항
 
-- 서버사이드 처리는 `auto_selectors`에 포함된 클래스명이 실제 HTML에 존재하는 경우에만 시도합니다(빠른 탐색 후 조건부 적용).
-- 복잡한 CSS 셀렉터는 서버사이드 XPath 변환 과정에서 일부 동작이 제한될 수 있습니다. 단순 셀렉터 사용을 권장합니다.
+- 서버사이드 처리는 `auto_selectors`의 클래스 토큰이 실제 HTML에 존재할 때만 실행됩니다.
+- 복잡한 CSS 셀렉터는 XPath 변환 제약이 있어 단순 셀렉터 사용을 권장합니다.
 
 ## 🎨 스타일링 예시
 
 ```css
-/* 기본 타이포그래피 */
+/* 예시 */
 body {
-  font-family: 'Noto Sans KR', sans-serif;
-  font-size: 16px;
+  font-family: 'Roboto', 'Noto Sans KR', sans-serif;
+  font-size: 1rem;
   line-height: 1.6;
 }
 
-/* 영문 스타일 */
-.ml-en {
-  font-family: 'Playfair Display', serif;
-  font-weight: 600;
-}
-
-/* 숫자 스타일 */
-.ml-num {
-  font-family: 'Roboto Mono', monospace;
-  color: #007cba;
-}
-
-/* 문장부호 스타일 */
+.ml-en,
+.ml-num,
 .ml-punct {
-  font-weight: bold;
-  color: #d63638;
+  position: relative;
+  font-size: 94%;
+  top: -0.01em;
 }
 ```
-
-## ✨ 변경 사항 하이라이트(v1.1.0)
-
-- MU 플러그인에서 일반 플러그인으로 전환(플러그인 활성화 필요)
-- 관리자 설정 페이지 추가: 타입/프리픽스/자동 적용/제외/숏코드 화이트리스트
-- 서버사이드 래핑 강화: 블록/본문/선택적 숏코드, AJAX/REST 응답 후처리
-- 클라이언트 보조 스크립트 추가: 동적 DOM 반영(MutationObserver), 수동 트리거 `window.MLWP_APPLY`
-- 예외 태그/제외 셀렉터/대괄호 보호 처리
 
 ## ✅ 호환성
 
