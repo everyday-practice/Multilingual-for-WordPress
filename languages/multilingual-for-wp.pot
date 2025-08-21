@@ -2,8 +2,8 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Multilingual.js for WordPress 1.1.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/multilingual-js-for-wordpress\n"
+"Project-Id-Version: Multilingual for WP 1.1.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/multilingual-for-wp\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,10 +12,10 @@ msgstr ""
 "POT-Creation-Date: 2024-01-01 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WordPress\n"
-"X-Domain: multilingual-wp\n"
+"X-Domain: multilingual-for-wp\n"
 
 #. Plugin Name of the plugin
-msgid "Multilingual.js for WordPress"
+msgid "Multilingual for WP"
 msgstr ""
 
 #. Plugin URI of the plugin
@@ -23,7 +23,7 @@ msgid "https://github.com/everyday-practice/Multilingual.js-for-WordPress"
 msgstr ""
 
 #. Description of the plugin
-msgid "Server-side text wrapping for consistent typography across languages. Wraps text in spans by language type to eliminate FOUC and provide enhanced multilingual design control."
+msgid "Server-side text wrapping for multilingual typography. Eliminates FOUC and provides enhanced design control."
 msgstr ""
 
 #. Author of the plugin

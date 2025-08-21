@@ -1,4 +1,4 @@
-=== Multilingual for WordPress ===
+=== Multilingual for WP ===
 Contributors: everydaypractice
 Donate link: https://everyday-practice.com/donate
 Tags: typography, multilingual, text-wrapping, performance, internationalization

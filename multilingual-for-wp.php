@@ -1,20 +1,19 @@
 <?php
 
 /**
- * Plugin Name: Multilingual for WordPress
- * Description: Server-side text wrapping for consistent typography across languages. Wraps text in spans by language type to eliminate FOUC and provide enhanced multilingual design control.
+ * Plugin Name: Multilingual for WP
+ * Description: Server-side text wrapping for multilingual typography. Eliminates FOUC and provides enhanced design control.
  * Version: 1.1.0
  * Author: Everyday Practice
  * Plugin URI: https://github.com/everyday-practice/Multilingual.js-for-WordPress
  * Author URI: https://everyday-practice.com
- * Text Domain: multilingual-wp
+ * Text Domain: multilingual-for-wp
  * Domain Path: /languages
  * Requires at least: 6.0
  * Tested up to: 6.8
  * Requires PHP: 7.4
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Network: false
  */
 if (!defined('ABSPATH'))
 	exit;
@@ -24,7 +23,7 @@ if (!defined('ABSPATH'))
  */
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
 	$url = admin_url('options-general.php?page=mlwp-settings');
-	$settings_link = '<a href="' . esc_url($url) . '">' . __('Settings', 'multilingual-wp') . '</a>';
+	$settings_link = '<a href="' . esc_url($url) . '">' . __('Settings', 'multilingual-for-wp') . '</a>';
 	array_unshift($links, $settings_link);
 	return $links;
 });
@@ -107,7 +106,7 @@ function mlwp_enqueue_scripts()
 	}
 
 	$handle = 'mlwp';
-	$src = plugin_dir_url(__FILE__) . 'multilingual-for-wordpress.js';
+	$src = plugin_dir_url(__FILE__) . 'multilingual-for-wp.js';
 	wp_enqueue_script($handle, $src, array(), '1.1.0', true);
 
 	$cfg = mlwp_get_config();
@@ -690,13 +689,6 @@ function mlwp_register_hooks()
 	add_action('wp_enqueue_scripts', 'mlwp_enqueue_scripts', 20);
 }
 
-/**
- * Load plugin textdomain for internationalization
- */
-function mlwp_load_textdomain() {
-	load_plugin_textdomain('multilingual-wp', false, dirname(plugin_basename(__FILE__)) . '/languages');
-}
-add_action('plugins_loaded', 'mlwp_load_textdomain');
 
 // 기본 훅 등록 (항상 실행)
 add_action('init', 'mlwp_register_hooks');
@@ -713,7 +705,7 @@ add_action('init', function () {
 		return;
 	}
 	// wp-admin에서 발생한 AJAX(에디터, 설정 등)에는 개입하지 않음
-	$ref = isset($_SERVER['HTTP_REFERER']) ? (string) $_SERVER['HTTP_REFERER'] : '';
+	$ref = isset($_SERVER['HTTP_REFERER']) ? sanitize_url(wp_unslash($_SERVER['HTTP_REFERER'])) : '';
 	if ($ref && strpos($ref, '/wp-admin/') !== false) {
 		return;
 	}

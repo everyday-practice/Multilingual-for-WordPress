@@ -13,19 +13,19 @@ msgstr ""
 "POT-Creation-Date: 2024-01-01 00:00+0000\n"
 "PO-Revision-Date: 2024-01-01 00:00+0000\n"
 "X-Generator: WordPress\n"
-"X-Domain: multilingual-wp\n"
+"X-Domain: multilingual-for-wp\n"
 
 #. Plugin Name of the plugin
-msgid "Multilingual for WordPress"
-msgstr "Multilingual for WordPress"
+msgid "Multilingual for WP"
+msgstr "Multilingual for WP"
 
 #. Plugin URI of the plugin
-msgid "https://github.com/everyday-practice/Multilingual.js-for-WordPress"
-msgstr "https://github.com/everyday-practice/Multilingual.js-for-WordPress"
+msgid "https://github.com/everyday-practice/Multilingual-for-WordPress"
+msgstr "https://github.com/everyday-practice/Multilingual-for-WordPress"
 
 #. Description of the plugin
-msgid "Server-side text wrapping for consistent typography across languages. Wraps text in spans by language type to eliminate FOUC and provide enhanced multilingual design control."
-msgstr "어도비 인디자인의 합성글꼴(섞어짜기)처럼 보다 섬세하게 다국어 섞어쓰기를 제어하는 위한 플러그인입니다. 오픈소스 라이브러리 multilingual.js를 워드프레스에 맞게 재구현하여, 서버사이드 래핑으로 스타일 지연 현상(FOUC)을 방지합니다."
+msgid "Server-side text wrapping for multilingual typography. Eliminates FOUC and provides enhanced design control."
+msgstr "다국어 타이포그래피를 위한 서버사이드 텍스트 래핑. FOUC를 방지하고 향상된 디자인 제어를 제공합니다."
 
 #. Author of the plugin
 msgid "Everyday Practice"
@@ -160,6 +160,10 @@ msgstr "이 프리픽스는 모든 자동 생성 CSS 클래스에 사용됩니�
 
 msgid "Enter \"ml\" to generate classes like ml-en, ml-ko, ml-num, etc."
 msgstr "ml을 입력하면 ml-en, ml-ko, ml-num 등의 클래스를 생성합니다."
+
+#: admin/settings.php:21 admin/settings.php:22
+msgid "Multilingual Settings"
+msgstr "Multilingual 설정"
 
 #: multilingual-js-for-wordpress.php:19
 msgid "Settings"

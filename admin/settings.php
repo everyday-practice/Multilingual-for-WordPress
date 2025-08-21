@@ -18,8 +18,8 @@ function mlwp_default_options()
 
 add_action('admin_menu', function () {
   add_options_page(
-    __('Multilingual Settings', 'multilingual-wp'),
-    __('Multilingual Settings', 'multilingual-wp'),
+    __('Multilingual Settings', 'multilingual-for-wp'),
+    __('Multilingual Settings', 'multilingual-for-wp'),
     'manage_options',
     'mlwp-settings',
     'mlwp_render_settings_page'
@@ -33,18 +33,21 @@ add_action('admin_init', function () {
 
   add_settings_section('mlwp_main', '', function () {
     echo '<div style="margin: 15px 0; padding: 0 15px; border: 1px #fff solid; background-color: #fff;">';
-    echo '<p>' . __('Server-side text wrapping for consistent typography across languages.', 'multilingual-wp') . '<br>' . sprintf(__('Reimplemented the open-source library %s for WordPress, applying server-side wrapping to prevent style delay issues (FOUC).', 'multilingual-wp'), '<a style="background-color: #e5e5e5; padding: 2px 4px; border-radius: 4px; color: #000000; text-decoration: none; margin-right: 2px; font-size: 12px;" href="https://github.com/multilingualjs/multilingual.js" target="_blank">multilingual.js</a>') . '</p>';
-    echo '<p>' . __('Configure text wrapping types, class prefix, auto-apply selectors, exclusion selectors, shortcode whitelist, and custom character sets.', 'multilingual-wp');
-    echo '<br>' . sprintf(__('For detailed usage instructions, please refer %s.', 'multilingual-wp'), '<a style="background-color: #e5e5e5; padding: 2px 4px; border-radius: 4px; color: #000000; text-decoration: none; margin-right: 2px; font-size: 12px;" href="https://github.com/everyday-practice/Multilingual.js-for-WordPress" target="_blank">' . __('here', 'multilingual-wp') . '</a>') . '</p>';
+    echo '<p>' . esc_html__('Server-side text wrapping for consistent typography across languages.', 'multilingual-for-wp') . '<br>' . 
+    // translators: %s is the name of the open-source library "multilingual.js" with a link
+    sprintf(esc_html__('Reimplemented the open-source library %s for WordPress, applying server-side wrapping to prevent style delay issues (FOUC).', 'multilingual-for-wp'), '<a style="background-color: #e5e5e5; padding: 2px 4px; border-radius: 4px; color: #000000; text-decoration: none; margin-right: 2px; font-size: 12px;" href="https://github.com/multilingualjs/multilingual.js" target="_blank">multilingual.js</a>') . '</p>';
+    echo '<p>' . esc_html__('Configure text wrapping types, class prefix, auto-apply selectors, exclusion selectors, shortcode whitelist, and custom character sets.', 'multilingual-for-wp');
+    // translators: %s is a link to the documentation page with the text "here"
+    echo '<br>' . sprintf(esc_html__('For detailed usage instructions, please refer %s.', 'multilingual-for-wp'), '<a style="background-color: #e5e5e5; padding: 2px 4px; border-radius: 4px; color: #000000; text-decoration: none; margin-right: 2px; font-size: 12px;" href="https://github.com/everyday-practice/Multilingual-for-WordPress" target="_blank">' . esc_html__('here', 'multilingual-for-wp') . '</a>') . '</p>';
     echo '</div>';
   }, 'mlwp-settings');
 
-  add_settings_field('mlwp_types', __('Text Wrapping Types', 'multilingual-wp'), 'mlwp_field_types', 'mlwp-settings', 'mlwp_main');
-  add_settings_field('mlwp_class_prefix', __('CSS Class Prefix', 'multilingual-wp'), 'mlwp_field_class_prefix', 'mlwp-settings', 'mlwp_main');
-  add_settings_field('mlwp_auto_selectors', __('Auto-Apply Selectors', 'multilingual-wp'), 'mlwp_field_auto_selectors', 'mlwp-settings', 'mlwp_main');
-  add_settings_field('mlwp_exclude_selectors', __('Exclusion Selectors', 'multilingual-wp'), 'mlwp_field_exclude_selectors', 'mlwp-settings', 'mlwp_main');
-  add_settings_field('mlwp_shortcode_whitelist', __('Shortcode Whitelist', 'multilingual-wp'), 'mlwp_field_shortcode_whitelist', 'mlwp-settings', 'mlwp_main');
-  add_settings_field('mlwp_custom_charsets', __('Custom Character Sets', 'multilingual-wp'), 'mlwp_field_custom_charsets', 'mlwp-settings', 'mlwp_main');
+  add_settings_field('mlwp_types', __('Text Wrapping Types', 'multilingual-for-wp'), 'mlwp_field_types', 'mlwp-settings', 'mlwp_main');
+  add_settings_field('mlwp_class_prefix', __('CSS Class Prefix', 'multilingual-for-wp'), 'mlwp_field_class_prefix', 'mlwp-settings', 'mlwp_main');
+  add_settings_field('mlwp_auto_selectors', __('Auto-Apply Selectors', 'multilingual-for-wp'), 'mlwp_field_auto_selectors', 'mlwp-settings', 'mlwp_main');
+  add_settings_field('mlwp_exclude_selectors', __('Exclusion Selectors', 'multilingual-for-wp'), 'mlwp_field_exclude_selectors', 'mlwp-settings', 'mlwp_main');
+  add_settings_field('mlwp_shortcode_whitelist', __('Shortcode Whitelist', 'multilingual-for-wp'), 'mlwp_field_shortcode_whitelist', 'mlwp-settings', 'mlwp_main');
+  add_settings_field('mlwp_custom_charsets', __('Custom Character Sets', 'multilingual-for-wp'), 'mlwp_field_custom_charsets', 'mlwp-settings', 'mlwp_main');
 });
 
 function mlwp_get_options()
@@ -60,12 +63,12 @@ function mlwp_field_types()
 {
   $opts = mlwp_get_options();
   $basic = [
-    'en' => __('English (en)', 'multilingual-wp'), 
-    'ko' => __('Korean (ko)', 'multilingual-wp'), 
-    'cn' => __('Chinese (cn)', 'multilingual-wp'), 
-    'jp' => __('Japanese (jp)', 'multilingual-wp'), 
-    'num' => __('Numbers (num)', 'multilingual-wp'), 
-    'punct' => __('Punctuation (punct)', 'multilingual-wp')
+    'en' => __('English (en)', 'multilingual-for-wp'), 
+    'ko' => __('Korean (ko)', 'multilingual-for-wp'), 
+    'cn' => __('Chinese (cn)', 'multilingual-for-wp'), 
+    'jp' => __('Japanese (jp)', 'multilingual-for-wp'), 
+    'num' => __('Numbers (num)', 'multilingual-for-wp'), 
+    'punct' => __('Punctuation (punct)', 'multilingual-for-wp')
   ];
   
   // 커스텀 문자세트에서 추가 타입 수집 (표시용)
@@ -87,7 +90,7 @@ function mlwp_field_types()
   foreach ($basic as $key => $label) {
     $checked = in_array($key, (array) $opts['types'], true) ? 'checked' : '';
     echo '<label style="display:inline-block;margin-right:12px !important;">';
-    echo '<input type="checkbox" name="' . esc_attr(MLWP_OPTION_KEY) . '[types][]" value="' . esc_attr($key) . '" ' . $checked . '> ' . esc_html($label);
+    echo '<input type="checkbox" name="' . esc_attr(MLWP_OPTION_KEY) . '[types][]" value="' . esc_attr($key) . '" ' . esc_attr($checked) . '> ' . esc_html($label);
     echo '</label>';
   }
   echo '</fieldset>';
@@ -95,7 +98,7 @@ function mlwp_field_types()
   // 커스텀 타입은 읽기 전용으로 표시
   if (!empty($custom_types)) {
     echo '<div style="max-width:800px;margin-top:10px;padding:8px 10px;background:#ffffff;border:1px solid#f46565;box-sizing: border-box;font-size: 13px;line-height: 1.3;">';
-    echo '<strong>' . __('Custom Character Sets (Auto-enabled):', 'multilingual-wp') . '</strong><br>';
+    echo '<strong>' . esc_html__('Custom Character Sets (Auto-enabled):', 'multilingual-for-wp') . '</strong><br>';
     foreach ($custom_types as $key => $label) {
       echo '<span style="display:inline-block;margin-right:15px;color:#c91c1c;">✓ ' . esc_html($label) . '</span>';
     }
@@ -110,14 +113,14 @@ function mlwp_field_class_prefix()
   // 아코디언 형식으로 간단한 설명 추가
   echo '<details style="max-width: 800px; margin-bottom: 15px;">';
   echo '<summary style="padding: 7px 12px; background: #ffffff; cursor: pointer; color: #666; font-weight: 600; font-size: 13px;">';
-  echo __('View Usage', 'multilingual-wp');
+  echo esc_html__('View Usage', 'multilingual-for-wp');
   echo '</summary>';
   echo '<div style="padding: 13px; background: #fff; border-top: 1px solid #ddd; font-size: 13px;">';
   
-  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . __('This prefix is used for all automatically generated CSS classes. Choose a short, unique prefix to avoid conflicts with existing styles.', 'multilingual-wp') . '</p>';
+  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . esc_html__('This prefix is used for all automatically generated CSS classes. Choose a short, unique prefix to avoid conflicts with existing styles.', 'multilingual-for-wp') . '</p>';
   
   echo '<div style="margin-top: 15px; padding: 8px 10px; background: #fff2db; border-radius: 3px; font-size: 13px; line-height: 1.5;">';
-  echo '<strong>' . __('Usage:', 'multilingual-wp') . '</strong> ' . __('Enter "ml" to generate classes like ml-en, ml-ko, ml-num, etc.', 'multilingual-wp');
+  echo '<strong>' . esc_html__('Usage:', 'multilingual-for-wp') . '</strong> ' . esc_html__('Enter "ml" to generate classes like ml-en, ml-ko, ml-num, etc.', 'multilingual-for-wp');
   echo '</div>';
   
   echo '</div>';
@@ -134,14 +137,14 @@ function mlwp_field_auto_selectors()
   // 아코디언 형식으로 자세한 설명 추가
   echo '<details style="max-width: 800px; margin-bottom: 15px;">';
     echo '<summary style="padding: 7px 12px; background: #ffffff; cursor: pointer; color: #666; font-weight: 600; font-size: 13px;">';
-  echo __('View Usage', 'multilingual-wp');
+  echo esc_html__('View Usage', 'multilingual-for-wp');
   echo '</summary>';
   echo '<div style="padding: 13px; background: #fff; border-top: 1px solid #ddd; font-size: 13px;">';
   
-  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . __('CSS selectors that automatically apply text wrapping when the page loads. Configure which elements should have their text processed for multilingual typography.', 'multilingual-wp') . '</p>';
+  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . esc_html__('CSS selectors that automatically apply text wrapping when the page loads. Configure which elements should have their text processed for multilingual typography.', 'multilingual-for-wp') . '</p>';
        
   echo '<div style="margin-top: 15px; padding: 8px 10px; background: #fff2db; border-radius: 3px; font-size: 13px; line-height: 1.5;">';
-  echo '<strong>' . __('Usage:', 'multilingual-wp') . '</strong> ' . __('Enter one CSS selector per line. These elements will have their text automatically wrapped with language-specific classes.', 'multilingual-wp');
+  echo '<strong>' . esc_html__('Usage:', 'multilingual-for-wp') . '</strong> ' . esc_html__('Enter one CSS selector per line. These elements will have their text automatically wrapped with language-specific classes.', 'multilingual-for-wp');
   echo '</div>';
   
   echo '</div>';
@@ -158,15 +161,15 @@ function mlwp_field_exclude_selectors()
   // 아코디언 형식으로 자세한 설명 추가
   echo '<details style="max-width: 800px; margin-bottom: 15px;">';
   echo '<summary style="padding: 7px 12px; background: #ffffff; cursor: pointer; color: #666; font-weight: 600; font-size: 13px;">';
-  echo __('View Usage', 'multilingual-wp');
+  echo esc_html__('View Usage', 'multilingual-for-wp');
   echo '</summary>';
   echo '<div style="padding: 13px; background: #fff; border-top: 1px solid #ddd; font-size: 13px;">';
   
-  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . __('CSS selectors that will be excluded from automatic text wrapping, even if they match auto-apply selectors. Use this to protect specific areas from processing.', 'multilingual-wp') . '</p>';
+  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . esc_html__('CSS selectors that will be excluded from automatic text wrapping, even if they match auto-apply selectors. Use this to protect specific areas from processing.', 'multilingual-for-wp') . '</p>';
   
   echo '<div style="margin-top: 15px; padding: 8px 10px; background: #fff2db; border-radius: 3px; font-size: 13px; line-height: 1.5;">';
-  echo '<strong>' . __('Usage:', 'multilingual-wp') . '</strong> ' . __('Enter one CSS selector per line. These elements and their children will be excluded from text wrapping.', 'multilingual-wp') . '<br>';
-  echo '<strong>' . __('Important:', 'multilingual-wp') . '</strong> ' . __('Exclusion rules apply to the selected element AND all its child elements.', 'multilingual-wp');
+  echo '<strong>' . esc_html__('Usage:', 'multilingual-for-wp') . '</strong> ' . esc_html__('Enter one CSS selector per line. These elements and their children will be excluded from text wrapping.', 'multilingual-for-wp') . '<br>';
+  echo '<strong>' . esc_html__('Important:', 'multilingual-for-wp') . '</strong> ' . esc_html__('Exclusion rules apply to the selected element AND all its child elements.', 'multilingual-for-wp');
   echo '</div>';
   
   echo '</div>';
@@ -183,15 +186,15 @@ function mlwp_field_shortcode_whitelist()
   // 아코디언 형식으로 자세한 설명 추가
   echo '<details style="max-width: 800px; margin-bottom: 15px;">';
   echo '<summary style="padding: 7px 12px; background: #ffffff; cursor: pointer; color: #666; font-weight: 600; font-size: 13px;">';
-  echo __('View Usage', 'multilingual-wp');
+  echo esc_html__('View Usage', 'multilingual-for-wp');
   echo '</summary>';
   echo '<div style="padding: 13px; background: #fff; border-top: 1px solid #ddd; font-size: 13px;">';
   
-  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . __('Use this when applying multilingual typography to content within [...] format shortcodes from themes or plugins. Prevents text wrapping from being applied when brackets are recognized as punctuation.', 'multilingual-wp') . '</p>';
+  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . esc_html__('Use this when applying multilingual typography to content within [...] format shortcodes from themes or plugins. Prevents text wrapping from being applied when brackets are recognized as punctuation.', 'multilingual-for-wp') . '</p>';
   
   echo '<div style="margin-top: 15px; padding: 8px 10px; background: #fff2db; border-radius: 3px; font-size: 13px; line-height: 1.5;">';
-  echo '<strong>' . __('Usage:', 'multilingual-wp') . '</strong> ' . __('Enter shortcode tag names one per line (without brackets []), example: [post_content] → post_content', 'multilingual-wp') . '<br>';
-  echo '<strong>' . __('Important:', 'multilingual-wp') . '</strong> ' . __('Only add shortcodes that output simple text content. Avoid shortcodes with complex HTML, forms, or interactive elements.', 'multilingual-wp');
+  echo '<strong>' . esc_html__('Usage:', 'multilingual-for-wp') . '</strong> ' . esc_html__('Enter shortcode tag names one per line (without brackets []), example: [post_content] → post_content', 'multilingual-for-wp') . '<br>';
+  echo '<strong>' . esc_html__('Important:', 'multilingual-for-wp') . '</strong> ' . esc_html__('Only add shortcodes that output simple text content. Avoid shortcodes with complex HTML, forms, or interactive elements.', 'multilingual-for-wp');
   echo '</div>';
   
   echo '</div>';
@@ -207,20 +210,20 @@ function mlwp_field_custom_charsets()
   // 아코디언 형식으로 자세한 설명 추가
   echo '<details style="max-width: 800px; margin-bottom: 15px;">';
   echo '<summary style="padding: 7px 12px; background: #ffffff; cursor: pointer; color: #666; font-weight: 600; font-size: 13px;">';
-  echo __('View Usage', 'multilingual-wp');
+  echo esc_html__('View Usage', 'multilingual-for-wp');
   echo '</summary>';
   echo '<div style="padding: 13px; background: #fff; border-top: 1px solid #ddd; font-size: 13px;">';
   
-  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . __('Define your own character types beyond the basic ones (English, Korean, Chinese, Japanese, numbers, punctuation). Create custom CSS classes for special characters that need unique styling.', 'multilingual-wp') . '</p>';
+  echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . esc_html__('Define your own character types beyond the basic ones (English, Korean, Chinese, Japanese, numbers, punctuation). Create custom CSS classes for special characters that need unique styling.', 'multilingual-for-wp') . '</p>';
   
-  echo '<div style="margin-bottom: 12px;"><strong>' . __('Format Examples:', 'multilingual-wp') . '</strong></div>';
+  echo '<div style="margin-bottom: 12px;"><strong>' . esc_html__('Format Examples:', 'multilingual-for-wp') . '</strong></div>';
   echo '<ul style="margin: 0 0 12px 0; line-height: 1.6;">';
-  echo '<li><code>bullet:•◦▪▫</code> - ' . __('Bullet point symbols → .ml-bullet', 'multilingual-wp') . '</li>';
-  echo '<li><code>arrow:→←↑↓</code> - ' . __('Arrow symbols → .ml-arrow', 'multilingual-wp') . '</li>';
+  echo '<li><code>bullet:•◦▪▫</code> - ' . esc_html__('Bullet point symbols → .ml-bullet', 'multilingual-for-wp') . '</li>';
+  echo '<li><code>arrow:→←↑↓</code> - ' . esc_html__('Arrow symbols → .ml-arrow', 'multilingual-for-wp') . '</li>';
   echo '</ul>';
   
   echo '<div style="margin-top: 15px; padding: 8px 10px; background: #fff2db; border-radius: 3px; font-size: 13px; line-height: 1.5;">';
-  echo '<strong>' . __('Usage:', 'multilingual-wp') . '</strong> ' . __('Enter one per line in type:charset format. Each type becomes a CSS class (.ml-typename).', 'multilingual-wp');
+  echo '<strong>' . esc_html__('Usage:', 'multilingual-for-wp') . '</strong> ' . esc_html__('Enter one per line in type:charset format. Each type becomes a CSS class (.ml-typename).', 'multilingual-for-wp');
   echo '</div>';
   
   echo '</div>';
@@ -249,7 +252,7 @@ function mlwp_render_settings_page()
   if (!current_user_can('manage_options'))
     return;
   echo '<div class="wrap">';
-  echo '<h1>' . esc_html__('Multilingual for WordPress', 'multilingual-wp') . '</h1>';
+  echo '<h1>' . esc_html__('Multilingual for WP', 'multilingual-for-wp') . '</h1>';
   echo '<form action="options.php" method="post">';
   settings_fields('mlwp_settings_group');
   do_settings_sections('mlwp-settings');
@@ -260,7 +263,7 @@ function mlwp_render_settings_page()
 function mlwp_sanitize_options($input)
 {
   // Verify nonce for security
-  if (!isset($_POST['_wpnonce']) || !wp_verify_nonce($_POST['_wpnonce'], 'mlwp_settings_group-options')) {
+  if (!isset($_POST['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce'])), 'mlwp_settings_group-options')) {
     return false;
   }
   
