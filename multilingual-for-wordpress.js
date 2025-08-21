@@ -1,5 +1,5 @@
 /**
- * Multilingual.js for WordPress 프론트엔드 스크립트
+ * Multilingual for WordPress 프론트엔드 스크립트
  * - window.MLWP_CFG 설정(types, classPrefix, selectors, excludeSelectors)을 사용합니다.
  * - 선택자 범위 내 텍스트 노드에서 언어/숫자/문장부호 토큰을 찾아 span 으로 감쌉니다.
  * - 초기 렌더와 동적 DOM 변경(MutationObserver) 모두 처리합니다.

@@ -12,7 +12,7 @@ msgstr ""
 "POT-Creation-Date: 2024-01-01 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WordPress\n"
-"X-Domain: multilingual-js-wp\n"
+"X-Domain: multilingual-wp\n"
 
 #. Plugin Name of the plugin
 msgid "Multilingual.js for WordPress"
@@ -40,12 +40,26 @@ msgstr ""
 msgid "Multilingual Settings"
 msgstr ""
 
+
+
 #: admin/settings.php:35
-msgid "Basic Settings"
+msgid "Server-side text wrapping for consistent typography across languages."
+msgstr ""
+
+#: admin/settings.php:35
+msgid "Reimplemented the open-source library %s for WordPress, applying server-side wrapping to prevent style delay issues (FOUC)."
 msgstr ""
 
 #: admin/settings.php:36
 msgid "Configure text wrapping types, class prefix, auto-apply selectors, exclusion selectors, shortcode whitelist, and custom character sets."
+msgstr ""
+
+#: admin/settings.php:37
+msgid "For detailed usage instructions, please refer %s."
+msgstr ""
+
+#: admin/settings.php:38
+msgid "here"
 msgstr ""
 
 #: admin/settings.php:39

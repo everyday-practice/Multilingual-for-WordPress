@@ -1,4 +1,4 @@
-# 🌐 Multilingual.js for WordPress
+# 🌐 Multilingual for WordPress
 
 [![WordPress](https://img.shields.io/badge/WordPress-6.x%2B-21759B?logo=wordpress&logoColor=white)](#) [![Type](https://img.shields.io/badge/Type-Plugin-blue)](#) [![Multilingual](https://img.shields.io/badge/Multilingual-i18n%2Fl10n-4CAF50)](#) [![Typography](https://img.shields.io/badge/Typography-Text%20wrapping-8E44AD)](#) [![Performance](https://img.shields.io/badge/Performance-Optimized-FF9800)](#) [![Accessibility](https://img.shields.io/badge/Accessibility-a11y-795548)](#)
 
@@ -13,7 +13,7 @@ AJAX / Interactivity API 에도 대응하여 클라이언트 사이드 랜더링
 ## 🛠️ 설치
 
 1. 폴더를 `wp-content/plugins/multilingual-js-for-wordpress/`에 업로드
-2. 관리자에서 플러그인을 활성화: `플러그인 → 설치된 플러그인 → Multilingual.js for WordPress → 활성화`
+2. 관리자에서 플러그인을 활성화: `플러그인 → 설치된 플러그인 → Multilingual for WordPress → 활성화`
 
 ## ⚙️ 설정 위치
 

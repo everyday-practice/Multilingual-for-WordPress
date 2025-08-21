@@ -1,4 +1,4 @@
-=== Multilingual.js for WordPress ===
+=== Multilingual for WordPress ===
 Contributors: everydaypractice
 Donate link: https://everyday-practice.com/donate
 Tags: typography, multilingual, text-wrapping, performance, internationalization
@@ -13,7 +13,7 @@ Server-side text wrapping for consistent typography across languages. Wraps text
 
 == Description ==
 
-Multilingual.js for WordPress provides server-side text wrapping functionality that eliminates Flash of Unstyled Content (FOUC) and ensures consistent typography from the first render. Based on the multilingual.js library, this plugin is optimized specifically for WordPress environments.
+Multilingual for WordPress provides server-side text wrapping functionality that eliminates Flash of Unstyled Content (FOUC) and ensures consistent typography from the first render. Based on the multilingual.js library, this plugin is optimized specifically for WordPress environments.
 
 = Key Features =
 

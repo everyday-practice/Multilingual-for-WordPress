@@ -13,11 +13,11 @@ msgstr ""
 "POT-Creation-Date: 2024-01-01 00:00+0000\n"
 "PO-Revision-Date: 2024-01-01 00:00+0000\n"
 "X-Generator: WordPress\n"
-"X-Domain: multilingual-js-wp\n"
+"X-Domain: multilingual-wp\n"
 
 #. Plugin Name of the plugin
-msgid "Multilingual.js for WordPress"
-msgstr "Multilingual.js for WordPress"
+msgid "Multilingual for WordPress"
+msgstr "Multilingual for WordPress"
 
 #. Plugin URI of the plugin
 msgid "https://github.com/everyday-practice/Multilingual.js-for-WordPress"
@@ -34,16 +34,6 @@ msgstr "Everyday Practice"
 #. Author URI of the plugin
 msgid "https://everyday-practice.com"
 msgstr "https://everyday-practice.com"
-
-#: admin/settings.php:22
-#: admin/settings.php:23
-#: admin/settings.php:164
-msgid "Multilingual Settings"
-msgstr "Multilingual 설정"
-
-#: admin/settings.php:35
-msgid "Basic Settings"
-msgstr "기본 설정"
 
 #: admin/settings.php:36
 msgid "Configure text wrapping types, class prefix, auto-apply selectors, exclusion selectors, shortcode whitelist, and custom character sets."
@@ -72,6 +62,22 @@ msgstr "숏코드 화이트리스트"
 #: admin/settings.php:44
 msgid "Custom Character Sets"
 msgstr "커스텀 문자세트"
+
+#: admin/settings.php:35
+msgid "Server-side text wrapping for consistent typography across languages."
+msgstr "어도비 인디자인의 합성글꼴(섞어짜기)처럼 보다 섬세하게 다국어 섞어쓰기를 제어하는 위한 플러그인입니다."
+
+#: admin/settings.php:35
+msgid "Reimplemented the open-source library %s for WordPress, applying server-side wrapping to prevent style delay issues (FOUC)."
+msgstr "오픈소스 라이브러리 %s를 워드프레스에 맞게 재구현하여, 서버사이드 래핑으로 스타일 지연 현상(FOUC)을 방지합니다."
+
+#: admin/settings.php:37
+msgid "For detailed usage instructions, please refer %s."
+msgstr "자세한 사용법은 %s를 참고해주세요."
+
+#: admin/settings.php:38
+msgid "here"
+msgstr "여기"
 
 #: admin/settings.php:60
 msgid "English (en)"
