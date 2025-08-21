@@ -1,6 +1,7 @@
 === Multilingual for WP ===
 Contributors: everydaypractice
-Donate link: https://everyday-practice.com/donate
+Plugin URI: https://github.com/everyday-practice/Multilingual-for-WordPress
+Author URI: https://everyday-practice.com
 Tags: typography, multilingual, text-wrapping, performance, internationalization
 Requires at least: 6.0
 Tested up to: 6.8
@@ -9,11 +10,14 @@ Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Server-side text wrapping for consistent typography across languages. Wraps text in spans by language type to eliminate FOUC and provide enhanced multilingual design control.
+Server-side text wrapping for consistent multilingual typography. Eliminates FOUC by wrapping text in spans by language type.
 
 == Description ==
 
 Multilingual for WordPress provides server-side text wrapping functionality that eliminates Flash of Unstyled Content (FOUC) and ensures consistent typography from the first render. Based on the multilingual.js library, this plugin is optimized specifically for WordPress environments.
+
+**한국어 사용자를 위한 안내**
+이 플러그인은 어도비 인디자인의 합성글꼴(섞어짜기)처럼 보다 섬세하게 다국어 섞어쓰기를 제어하기 위한 플러그인입니다. 자세한 한국어 사용법은 [여기](https://github.com/everyday-practice/Multilingual-for-WordPress)를 참고해주세요.
 
 = Key Features =
 
@@ -45,7 +49,6 @@ Multilingual for WordPress provides server-side text wrapping functionality that
 * Multilingual websites needing consistent typography
 * Sites with mixed language content
 * Typography-focused designs requiring precise control
-* Performance-sensitive sites avoiding client-side text processing
 
 = Compatibility =
 
@@ -117,6 +120,11 @@ Yes, this plugin focuses on typography and text wrapping rather than translation
 == Changelog ==
 
 = 1.1.0 =
+* Initial release
+* Server-side text wrapping functionality
+* Support for English, Korean, Chinese, Japanese, numbers, and punctuation
+* Basic AJAX compatibility
+* WordPress admin interface
 * Enhanced server-side processing for better performance
 * Added support for custom character sets
 * Improved AJAX and REST API compatibility
@@ -124,18 +132,6 @@ Yes, this plugin focuses on typography and text wrapping rather than translation
 * Enhanced MutationObserver for dynamic content
 * Improved shortcode whitelist feature
 * Better protection for template tokens and shortcodes
-
-= 1.0.0 =
-* Initial release
-* Server-side text wrapping functionality
-* Support for English, Korean, Chinese, Japanese, numbers, and punctuation
-* Basic AJAX compatibility
-* WordPress admin interface
-
-== Upgrade Notice ==
-
-= 1.1.0 =
-This version adds custom character sets and improved performance. Please review your settings after upgrading.
 
 == Advanced Usage ==
 

@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: Multilingual for WP
- * Description: Server-side text wrapping for multilingual typography. Eliminates FOUC and provides enhanced design control.
+ * Description: Server-side text wrapping for consistent multilingual typography. Eliminates FOUC by wrapping text in spans by language type.
  * Version: 1.1.0
  * Author: Everyday Practice
  * Plugin URI: https://github.com/everyday-practice/Multilingual.js-for-WordPress
