@@ -163,7 +163,7 @@ msgstr "ml을 입력하면 ml-en, ml-ko, ml-num 등의 클래스를 생성합니
 
 #: admin/settings.php:21 admin/settings.php:22
 msgid "Multilingual Settings"
-msgstr "Multilingual 설정"
+msgstr "Multilingual for WP"
 
 #: multilingual-js-for-wordpress.php:19
 msgid "Settings"

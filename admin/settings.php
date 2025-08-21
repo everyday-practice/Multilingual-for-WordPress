@@ -18,8 +18,8 @@ function mlwp_default_options()
 
 add_action('admin_menu', function () {
   add_options_page(
-    __('Multilingual Settings', 'multilingual-for-wp'),
-    __('Multilingual Settings', 'multilingual-for-wp'),
+    __('Multilingual for WP', 'multilingual-for-wp'),
+    __('Multilingual for WP', 'multilingual-for-wp'),
     'manage_options',
     'mlwp-settings',
     'mlwp_render_settings_page'
@@ -142,7 +142,7 @@ function mlwp_field_auto_selectors()
   echo '<div style="padding: 13px; background: #fff; border-top: 1px solid #ddd; font-size: 13px;">';
   
   echo '<p style="margin: 0 0 12px 0; font-size: 13px;">' . esc_html__('CSS selectors that automatically apply text wrapping when the page loads. Configure which elements should have their text processed for multilingual typography.', 'multilingual-for-wp') . '</p>';
-       
+
   echo '<div style="margin-top: 15px; padding: 8px 10px; background: #fff2db; border-radius: 3px; font-size: 13px; line-height: 1.5;">';
   echo '<strong>' . esc_html__('Usage:', 'multilingual-for-wp') . '</strong> ' . esc_html__('Enter one CSS selector per line. These elements will have their text automatically wrapped with language-specific classes.', 'multilingual-for-wp');
   echo '</div>';
@@ -252,7 +252,7 @@ function mlwp_render_settings_page()
   if (!current_user_can('manage_options'))
     return;
   echo '<div class="wrap">';
-  echo '<h1>' . esc_html__('Multilingual for WP', 'multilingual-for-wp') . '</h1>';
+  echo '<h1>' . esc_html__('Multilingual for WordPress', 'multilingual-for-wp') . '</h1>';
   echo '<form action="options.php" method="post">';
   settings_fields('mlwp_settings_group');
   do_settings_sections('mlwp-settings');
