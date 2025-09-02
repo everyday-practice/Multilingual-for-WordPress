@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Plugin Name: Multilingual for WP
+ * Plugin Name: Multilingual Text Wrapper
  * Description: Server-side text wrapping for consistent multilingual typography. Eliminates FOUC by wrapping text in spans by language type.
  * Version: 1.1.0
  * Author: Everyday Practice
- * Plugin URI: https://github.com/everyday-practice/Multilingual.js-for-WordPress
+ * Plugin URI: https://github.com/everyday-practice/Multilingual-for-WordPress
  * Author URI: https://everyday-practice.com
- * Text Domain: multilingual-for-wp
+ * Text Domain: multilingual-text-wrapper
  * Domain Path: /languages
  * Requires at least: 6.0
  * Tested up to: 6.8
@@ -22,8 +22,8 @@ if (!defined('ABSPATH'))
  * 플러그인 목록 화면에서 설정 링크 추가
  */
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
-	$url = admin_url('options-general.php?page=mlwp-settings');
-	$settings_link = '<a href="' . esc_url($url) . '">' . __('Settings', 'multilingual-for-wp') . '</a>';
+	$url = admin_url('options-general.php?page=mtw-settings');
+	$settings_link = '<a href="' . esc_url($url) . '">' . __('Settings', 'multilingual-text-wrapper') . '</a>';
 	array_unshift($links, $settings_link);
 	return $links;
 });
@@ -106,7 +106,7 @@ function mlwp_enqueue_scripts()
 	}
 
 	$handle = 'mlwp';
-	$src = plugin_dir_url(__FILE__) . 'multilingual-for-wp.js';
+	$src = plugin_dir_url(__FILE__) . 'multilingual-text-wrapper.js';
 	wp_enqueue_script($handle, $src, array(), '1.1.0', true);
 
 	$cfg = mlwp_get_config();

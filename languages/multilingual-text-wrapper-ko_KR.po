@@ -13,7 +13,7 @@ msgstr ""
 "POT-Creation-Date: 2024-01-01 00:00+0000\n"
 "PO-Revision-Date: 2024-01-01 00:00+0000\n"
 "X-Generator: WordPress\n"
-"X-Domain: multilingual-for-wp\n"
+"X-Domain: multilingual-text-wrapper\n"
 
 #. Plugin Name of the plugin
 msgid "Multilingual for WP"

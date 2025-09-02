@@ -1,6 +1,6 @@
-=== Multilingual for WP ===
-Contributors: everydaypractice
-Plugin URI: https://github.com/everyday-practice/Multilingual-for-WordPress
+=== Multilingual Text Wrapper ===
+Contributors: helloep
+Plugin URI: https://github.com/everyday-practice/Multilingual-Text-Wrapper
 Author URI: https://everyday-practice.com
 Tags: typography, multilingual, text-wrapping, performance, internationalization
 Requires at least: 6.0
@@ -14,10 +14,10 @@ Server-side text wrapping for consistent multilingual typography. Eliminates FOU
 
 == Description ==
 
-Multilingual for WordPress provides server-side text wrapping functionality that eliminates Flash of Unstyled Content (FOUC) and ensures consistent typography from the first render. Based on the multilingual.js library, this plugin is optimized specifically for WordPress environments.
+Multilingual Text Wrapper provides server-side text wrapping functionality that eliminates Flash of Unstyled Content (FOUC) and ensures consistent typography from the first render. Based on the multilingual.js library, this plugin is optimized specifically for WordPress environments.
 
 **한국어 사용자를 위한 안내**
-이 플러그인은 어도비 인디자인의 합성글꼴(섞어짜기)처럼 보다 섬세하게 다국어 섞어쓰기를 제어하기 위한 플러그인입니다. 자세한 한국어 사용법은 [여기](https://github.com/everyday-practice/Multilingual-for-WordPress)를 참고해주세요.
+이 플러그인은 어도비 인디자인의 합성글꼴(섞어짜기)처럼 보다 섬세하게 다국어 섞어쓰기를 제어하기 위한 플러그인입니다. 자세한 한국어 사용법은 [여기](https://github.com/everyday-practice/Multilingual-Text-Wrapper)를 참고해주세요.
 
 = Key Features =
 
@@ -56,7 +56,7 @@ This plugin follows the patterns and class naming conventions of the original [m
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/multilingual-js-for-wordpress/` directory, or install the plugin through the WordPress plugins screen directly
+1. Upload the plugin files to the `/wp-content/plugins/multilingual-text-wrapper/` directory, or install the plugin through the WordPress plugins screen directly
 2. Activate the plugin through the 'Plugins' screen in WordPress
 3. Use the Settings → Multilingual Settings screen to configure the plugin
 
