@@ -18,8 +18,8 @@ function mlwp_default_options()
 
 add_action('admin_menu', function () {
   	add_options_page(
-		__('Multilingual Text Wrapper', 'multilingual-text-wrapper'),
-		__('Multilingual Text Wrapper', 'multilingual-text-wrapper'),
+		__('Multilingual Settings', 'multilingual-text-wrapper'),
+		__('Multilingual Settings', 'multilingual-text-wrapper'),
 		'manage_options',
 		'mtw-settings',
 		'mlwp_render_settings_page'
@@ -252,7 +252,7 @@ function mlwp_render_settings_page()
   if (!current_user_can('manage_options'))
     return;
   echo '<div class="wrap">';
-  		echo '<h1>' . esc_html__('Multilingual Text Wrapper', 'multilingual-text-wrapper') . '</h1>';
+  		echo '<h1>' . esc_html__('Multilingual Settings', 'multilingual-text-wrapper') . '</h1>';
   echo '<form action="options.php" method="post">';
   settings_fields('mlwp_settings_group');
   do_settings_sections('mlwp-settings');
@@ -358,7 +358,7 @@ function mlwp_textarea_to_array($text, $fallback = [])
   return !empty($lines) ? $lines : $fallback;
 }
 
-register_activation_hook(dirname(__FILE__, 2) . '/multilingual-js-for-wordpress.php', function () {
+register_activation_hook(dirname(__FILE__, 2) . '/multilingual-text-wrapper.php', function () {
   if (get_option(MLWP_OPTION_KEY) === false) {
     add_option(MLWP_OPTION_KEY, mlwp_default_options());
   }

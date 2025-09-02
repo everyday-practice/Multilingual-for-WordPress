@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Multilingual.js for WordPress 1.1.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/multilingual-js-for-wordpress\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/multilingual-text-wrapper\n"
 "Last-Translator: Everyday Practice <contact@everyday-practice.com>\n"
 "Language-Team: Korean <ko@li.org>\n"
 "Language: ko_KR\n"
@@ -16,8 +16,8 @@ msgstr ""
 "X-Domain: multilingual-text-wrapper\n"
 
 #. Plugin Name of the plugin
-msgid "Multilingual for WP"
-msgstr "Multilingual for WP"
+msgid "Multilingual Text Wrapper"
+msgstr "Multilingual Text Wrapper"
 
 #. Plugin URI of the plugin
 msgid "https://github.com/everyday-practice/Multilingual-for-WordPress"
@@ -161,10 +161,10 @@ msgstr "이 프리픽스는 모든 자동 생성 CSS 클래스에 사용됩니�
 msgid "Enter \"ml\" to generate classes like ml-en, ml-ko, ml-num, etc."
 msgstr "ml을 입력하면 ml-en, ml-ko, ml-num 등의 클래스를 생성합니다."
 
-#: admin/settings.php:21 admin/settings.php:22
+#: admin/settings.php:21 admin/settings.php:22 admin/settings.php:255
 msgid "Multilingual Settings"
-msgstr "Multilingual for WP"
+msgstr "Multilingual 설정"
 
-#: multilingual-js-for-wordpress.php:19
+#: multilingual-text-wrapper.php:19
 msgid "Settings"
 msgstr "설정" 

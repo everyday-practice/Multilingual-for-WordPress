@@ -15,7 +15,7 @@ msgstr ""
 "X-Domain: multilingual-text-wrapper\n"
 
 #. Plugin Name of the plugin
-msgid "Multilingual for WP"
+msgid "Multilingual Text Wrapper"
 msgstr ""
 
 #. Plugin URI of the plugin
@@ -208,6 +208,6 @@ msgstr ""
 msgid "Default: <code>ml</code> — generates classes like <code>ml-en</code>, <code>ml-ko</code>, <code>ml-num</code>, etc."
 msgstr ""
 
-#: multilingual-js-for-wordpress.php:19
+#: multilingual-text-wrapper.php:19
 msgid "Settings"
 msgstr "" 
